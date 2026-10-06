@@ -1,0 +1,205 @@
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/main.c"
+  20              		.section	.text.main,"ax",%progbits
+  21              		.align	1
+  22              		.global	main
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	main:
+  28              	.LFB0:
+   1:Core/Src/main.c **** #include <stdint.h>
+   2:Core/Src/main.c **** 
+   3:Core/Src/main.c **** int main(void) {
+  29              		.loc 1 3 16 view -0
+  30              		.cfi_startproc
+  31              		@ Volatile: function does not return.
+  32              		@ args = 0, pretend = 0, frame = 8
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35 0000 82B0     		sub	sp, sp, #8
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+   4:Core/Src/main.c ****     // 1. Включение тактирования ПОРТА С (ставим бит 2 в ед�
+   5:Core/Src/main.c ****     *(uint32_t*)(0x40023800UL + 0x30UL) |= (0x01UL << 2);
+  38              		.loc 1 5 5 view .LVU1
+  39 0002 1D4A     		ldr	r2, .L8
+  40 0004 D2F83038 		ldr	r3, [r2, #2096]
+  41              		.loc 1 5 41 is_stmt 0 view .LVU2
+  42 0008 43F00403 		orr	r3, r3, #4
+  43 000c C2F83038 		str	r3, [r2, #2096]
+   6:Core/Src/main.c **** 
+   7:Core/Src/main.c ****     // 2. Настройка 13-го пина GPIOC в режим вывода (Output)
+   8:Core/Src/main.c ****     // Очищаем биты 26 и 27
+   9:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x00UL) &= ~(0x03UL << 26);
+  44              		.loc 1 9 5 is_stmt 1 view .LVU3
+  45 0010 A2F54052 		sub	r2, r2, #12288
+  46 0014 D2F80038 		ldr	r3, [r2, #2048]
+  47              		.loc 1 9 41 is_stmt 0 view .LVU4
+  48 0018 23F04063 		bic	r3, r3, #201326592
+  49 001c C2F80038 		str	r3, [r2, #2048]
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 2
+
+
+  10:Core/Src/main.c ****     // Устанавливаем режим вывода (01 в биты [27:26])
+  11:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x00UL) |= (0x01UL << 26);
+  50              		.loc 1 11 5 is_stmt 1 view .LVU5
+  51              		.loc 1 11 41 is_stmt 0 view .LVU6
+  52 0020 43F08063 		orr	r3, r3, #67108864
+  53 0024 C2F80038 		str	r3, [r2, #2048]
+  12:Core/Src/main.c **** 
+  13:Core/Src/main.c ****     // 3. Настройка типа вывода 13-го пина на Push-Pull
+  14:Core/Src/main.c ****     // Очищаем 13-й бит в GPIOC_OTYPER (0 - Push-Pull)
+  15:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x04UL) &= ~(0x01UL << 13);
+  54              		.loc 1 15 5 is_stmt 1 view .LVU7
+  55 0028 D2F80438 		ldr	r3, [r2, #2052]
+  56              		.loc 1 15 41 is_stmt 0 view .LVU8
+  57 002c 23F40053 		bic	r3, r3, #8192
+  58 0030 C2F80438 		str	r3, [r2, #2052]
+  59 0034 12E0     		b	.L6
+  60              	.L3:
+  61              	.LBB2:
+  16:Core/Src/main.c **** 
+  17:Core/Src/main.c ****     while(1) {
+  18:Core/Src/main.c ****         // --- 4. ВКЛЮЧАЕМ светодиод (подаем низкий уровень ч�
+  19:Core/Src/main.c ****         // Запись единицы в 29-й бит (13 + 16) сбрасывает пин PC13 �
+  20:Core/Src/main.c ****         *(uint32_t*)(0x40020800UL + 0x18UL) = (0x01UL << 29); 
+  21:Core/Src/main.c **** 
+  22:Core/Src/main.c ****         // Программная задержка (микроконтроллер просто с�
+  23:Core/Src/main.c ****         // volatile не позволяет компилятору оптимизировать и 
+  24:Core/Src/main.c ****         for (volatile uint32_t i = 0; i < 500000; i++) {
+  25:Core/Src/main.c ****             __asm__ volatile ("nop");
+  62              		.loc 1 25 13 is_stmt 1 view .LVU9
+  63              		.syntax unified
+  64              	@ 25 "Core/Src/main.c" 1
+  65 0036 00BF     		nop
+  66              	@ 0 "" 2
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+  67              		.loc 1 24 52 discriminator 3 view .LVU10
+  68              		.thumb
+  69              		.syntax unified
+  70 0038 009B     		ldr	r3, [sp]
+  71 003a 0133     		adds	r3, r3, #1
+  72 003c 0093     		str	r3, [sp]
+  73              	.L2:
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+  74              		.loc 1 24 41 discriminator 1 view .LVU11
+  75 003e 009A     		ldr	r2, [sp]
+  76 0040 0E4B     		ldr	r3, .L8+4
+  77 0042 9A42     		cmp	r2, r3
+  78 0044 F7D9     		bls	.L3
+  79              	.LBE2:
+  26:Core/Src/main.c ****         }
+  27:Core/Src/main.c **** 
+  28:Core/Src/main.c ****         // --- 5. ВЫКЛЮЧАЕМ светодиод (подаем высокий уровень
+  29:Core/Src/main.c ****         // Запись единицы в 13-й бит устанавливает пин PC13 в е
+  30:Core/Src/main.c ****         *(uint32_t*)(0x40020800UL + 0x18UL) = (0x01UL << 13); 
+  80              		.loc 1 30 9 view .LVU12
+  81              		.loc 1 30 45 is_stmt 0 view .LVU13
+  82 0046 0E4B     		ldr	r3, .L8+8
+  83 0048 4FF40052 		mov	r2, #8192
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 3
+
+
+  84 004c C3F81828 		str	r2, [r3, #2072]
+  31:Core/Src/main.c **** 
+  32:Core/Src/main.c ****         // Точно такая же задержка во включенном состоянии
+  33:Core/Src/main.c ****         for (volatile uint32_t i = 0; i < 500000; i++) {
+  85              		.loc 1 33 9 is_stmt 1 view .LVU14
+  86              	.LBB3:
+  87              		.loc 1 33 14 view .LVU15
+  88              		.loc 1 33 32 is_stmt 0 view .LVU16
+  89 0050 0023     		movs	r3, #0
+  90 0052 0193     		str	r3, [sp, #4]
+  91              	.L4:
+  92              		.loc 1 33 41 is_stmt 1 discriminator 1 view .LVU17
+  93 0054 019A     		ldr	r2, [sp, #4]
+  94 0056 094B     		ldr	r3, .L8+4
+  95 0058 9A42     		cmp	r2, r3
+  96 005a 07D9     		bls	.L5
+  97              	.L6:
+  98              	.LBE3:
+  17:Core/Src/main.c ****         // --- 4. ВКЛЮЧАЕМ светодиод (подаем низкий уровень ч�
+  99              		.loc 1 17 5 view .LVU18
+  20:Core/Src/main.c **** 
+ 100              		.loc 1 20 9 view .LVU19
+  20:Core/Src/main.c **** 
+ 101              		.loc 1 20 45 is_stmt 0 view .LVU20
+ 102 005c 084B     		ldr	r3, .L8+8
+ 103 005e 4FF00052 		mov	r2, #536870912
+ 104 0062 C3F81828 		str	r2, [r3, #2072]
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 105              		.loc 1 24 9 is_stmt 1 view .LVU21
+ 106              	.LBB4:
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 107              		.loc 1 24 14 view .LVU22
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 108              		.loc 1 24 32 is_stmt 0 view .LVU23
+ 109 0066 0023     		movs	r3, #0
+ 110 0068 0093     		str	r3, [sp]
+  24:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 111              		.loc 1 24 9 view .LVU24
+ 112 006a E8E7     		b	.L2
+ 113              	.L5:
+ 114              	.LBE4:
+ 115              	.LBB5:
+  34:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 116              		.loc 1 34 13 is_stmt 1 view .LVU25
+ 117              		.syntax unified
+ 118              	@ 34 "Core/Src/main.c" 1
+ 119 006c 00BF     		nop
+ 120              	@ 0 "" 2
+  33:Core/Src/main.c ****             __asm__ volatile ("nop");
+ 121              		.loc 1 33 52 discriminator 3 view .LVU26
+ 122              		.thumb
+ 123              		.syntax unified
+ 124 006e 019B     		ldr	r3, [sp, #4]
+ 125 0070 0133     		adds	r3, r3, #1
+ 126 0072 0193     		str	r3, [sp, #4]
+ 127 0074 EEE7     		b	.L4
+ 128              	.L9:
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 4
+
+
+ 129 0076 00BF     		.align	2
+ 130              	.L8:
+ 131 0078 00300240 		.word	1073885184
+ 132 007c 1FA10700 		.word	499999
+ 133 0080 00000240 		.word	1073872896
+ 134              	.LBE5:
+ 135              		.cfi_endproc
+ 136              	.LFE0:
+ 138              		.text
+ 139              	.Letext0:
+ 140              		.file 2 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/machine/_default_t
+ 141              		.file 3 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:21     .text.main:00000000 $t
+C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:27     .text.main:00000000 main
+C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:131    .text.main:00000078 $d
+
+NO UNDEFINED SYMBOLS
