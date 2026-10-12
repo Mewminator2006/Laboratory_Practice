@@ -2,11 +2,11 @@
 #include <stdint.h>
 void gpio_init(void){
 // Включение тактирования портов B
-*(volatile uint32_t*)(0x40023800UL + 0x30UL) |= 0x02UL;
+RCC_GPIO_EN |= RCC_GPIOB_EN;
 // Настройка портов B0, B1, B2 на выход
-*(volatile uint32_t*)(0x40020400UL + 0x00UL) |= 0x15UL;
+GPIOB_MODER |= GPIO_MODE_B0_OUT|GPIO_MODE_B1_OUT|GPIO_MODE_B2_OUT;
 // Настройка типа выхода данных портов как PP (Push-Pull)
-*(volatile uint32_t*)(0x40020400UL + 0x04UL) |= 0x00UL;
+GPIOB_OTYPER |= 0x00UL;
 // Настройка скорости работы пинов B0, B1, B2
-*(volatile uint32_t*)(0x40020400UL + 0x08UL) |= 0x15UL;
+GPIOB_OSPEEDR |= GPIO_SPEED_B0_MID|GPIO_SPEED_B1_MID|GPIO_SPEED_B2_MID;
 }
