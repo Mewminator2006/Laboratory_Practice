@@ -150,6 +150,7 @@ endif
 C_SOURCES =  \
 $(SYS) \
 Core/Src/main.c \
+Core/Src/init.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -207,7 +208,7 @@ C_INCLUDES =  \
 -I$(CMSIS_INC_DEV) \
 -I$(CMSIS_INC_UNIT) \
 -I$(CMSIS_INC) \
--ICore/Inc \
+-ICore/Inc
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -246,6 +247,7 @@ all: $(BUILD_DIR)/$(TARGET_SERIES)$(TARGET_VERSION).elf $(BUILD_DIR)/$(TARGET_SE
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+vpath %.c Core/$(LAB_DIR)
 # list of ASM program objects
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
@@ -276,7 +278,7 @@ $(BUILD_DIR):
 # clean up
 #######################################
 clean:
-	@"rm" -fR $(BUILD_DIR)
+	@if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
   
 #######################################
 # openocd

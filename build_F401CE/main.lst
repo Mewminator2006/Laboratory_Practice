@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 1
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -29,177 +29,480 @@ ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 1
   27              	main:
   28              	.LFB0:
    1:Core/Src/main.c **** #include <stdint.h>
-   2:Core/Src/main.c **** 
-   3:Core/Src/main.c **** int main(void) {
-  29              		.loc 1 3 16 view -0
+   2:Core/Src/main.c **** #include "init.h"
+   3:Core/Src/main.c **** int main(void)
+   4:Core/Src/main.c **** {
+  29              		.loc 1 4 1 view -0
   30              		.cfi_startproc
-  31              		@ Volatile: function does not return.
-  32              		@ args = 0, pretend = 0, frame = 8
-  33              		@ frame_needed = 0, uses_anonymous_args = 0
-  34              		@ link register save eliminated.
-  35 0000 82B0     		sub	sp, sp, #8
-  36              	.LCFI0:
-  37              		.cfi_def_cfa_offset 8
-   4:Core/Src/main.c ****     // 1. Включение тактирования ПОРТА С (ставим бит 2 в ед�
-   5:Core/Src/main.c ****     *(uint32_t*)(0x40023800UL + 0x30UL) |= (0x01UL << 2);
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+   5:Core/Src/main.c ****     gpio_init();
   38              		.loc 1 5 5 view .LVU1
-  39 0002 1D4A     		ldr	r2, .L8
-  40 0004 D2F83038 		ldr	r3, [r2, #2096]
-  41              		.loc 1 5 41 is_stmt 0 view .LVU2
-  42 0008 43F00403 		orr	r3, r3, #4
-  43 000c C2F83038 		str	r3, [r2, #2096]
-   6:Core/Src/main.c **** 
-   7:Core/Src/main.c ****     // 2. Настройка 13-го пина GPIOC в режим вывода (Output)
-   8:Core/Src/main.c ****     // Очищаем биты 26 и 27
-   9:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x00UL) &= ~(0x03UL << 26);
-  44              		.loc 1 9 5 is_stmt 1 view .LVU3
-  45 0010 A2F54052 		sub	r2, r2, #12288
-  46 0014 D2F80038 		ldr	r3, [r2, #2048]
-  47              		.loc 1 9 41 is_stmt 0 view .LVU4
-  48 0018 23F04063 		bic	r3, r3, #201326592
-  49 001c C2F80038 		str	r3, [r2, #2048]
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 2
+  39 0002 FFF7FEFF 		bl	gpio_init
+  40              	.LVL0:
+   6:Core/Src/main.c ****     int counter = 0;
+  41              		.loc 1 6 5 view .LVU2
+   7:Core/Src/main.c ****     int was_changed = 0;
+  42              		.loc 1 7 5 view .LVU3
+  43              		.loc 1 7 9 is_stmt 0 view .LVU4
+  44 0006 0021     		movs	r1, #0
+   6:Core/Src/main.c ****     int counter = 0;
+  45              		.loc 1 6 9 view .LVU5
+  46 0008 0A46     		mov	r2, r1
+  47 000a 1DE0     		b	.L2
+  48              	.LVL1:
+  49              	.L23:
+   8:Core/Src/main.c ****     while (1)
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 2
 
 
-  10:Core/Src/main.c ****     // Устанавливаем режим вывода (01 в биты [27:26])
-  11:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x00UL) |= (0x01UL << 26);
-  50              		.loc 1 11 5 is_stmt 1 view .LVU5
-  51              		.loc 1 11 41 is_stmt 0 view .LVU6
-  52 0020 43F08063 		orr	r3, r3, #67108864
-  53 0024 C2F80038 		str	r3, [r2, #2048]
-  12:Core/Src/main.c **** 
-  13:Core/Src/main.c ****     // 3. Настройка типа вывода 13-го пина на Push-Pull
-  14:Core/Src/main.c ****     // Очищаем 13-й бит в GPIOC_OTYPER (0 - Push-Pull)
-  15:Core/Src/main.c ****     *(uint32_t*)(0x40020800UL + 0x04UL) &= ~(0x01UL << 13);
-  54              		.loc 1 15 5 is_stmt 1 view .LVU7
-  55 0028 D2F80438 		ldr	r3, [r2, #2052]
-  56              		.loc 1 15 41 is_stmt 0 view .LVU8
-  57 002c 23F40053 		bic	r3, r3, #8192
-  58 0030 C2F80438 		str	r3, [r2, #2052]
-  59 0034 12E0     		b	.L6
-  60              	.L3:
-  61              	.LBB2:
-  16:Core/Src/main.c **** 
-  17:Core/Src/main.c ****     while(1) {
-  18:Core/Src/main.c ****         // --- 4. ВКЛЮЧАЕМ светодиод (подаем низкий уровень ч�
-  19:Core/Src/main.c ****         // Запись единицы в 29-й бит (13 + 16) сбрасывает пин PC13 �
-  20:Core/Src/main.c ****         *(uint32_t*)(0x40020800UL + 0x18UL) = (0x01UL << 29); 
-  21:Core/Src/main.c **** 
-  22:Core/Src/main.c ****         // Программная задержка (микроконтроллер просто с�
-  23:Core/Src/main.c ****         // volatile не позволяет компилятору оптимизировать и 
-  24:Core/Src/main.c ****         for (volatile uint32_t i = 0; i < 500000; i++) {
-  25:Core/Src/main.c ****             __asm__ volatile ("nop");
-  62              		.loc 1 25 13 is_stmt 1 view .LVU9
-  63              		.syntax unified
-  64              	@ 25 "Core/Src/main.c" 1
-  65 0036 00BF     		nop
-  66              	@ 0 "" 2
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
-  67              		.loc 1 24 52 discriminator 3 view .LVU10
-  68              		.thumb
-  69              		.syntax unified
-  70 0038 009B     		ldr	r3, [sp]
-  71 003a 0133     		adds	r3, r3, #1
-  72 003c 0093     		str	r3, [sp]
-  73              	.L2:
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
-  74              		.loc 1 24 41 discriminator 1 view .LVU11
-  75 003e 009A     		ldr	r2, [sp]
-  76 0040 0E4B     		ldr	r3, .L8+4
-  77 0042 9A42     		cmp	r2, r3
-  78 0044 F7D9     		bls	.L3
-  79              	.LBE2:
-  26:Core/Src/main.c ****         }
-  27:Core/Src/main.c **** 
-  28:Core/Src/main.c ****         // --- 5. ВЫКЛЮЧАЕМ светодиод (подаем высокий уровень
-  29:Core/Src/main.c ****         // Запись единицы в 13-й бит устанавливает пин PC13 в е
-  30:Core/Src/main.c ****         *(uint32_t*)(0x40020800UL + 0x18UL) = (0x01UL << 13); 
-  80              		.loc 1 30 9 view .LVU12
-  81              		.loc 1 30 45 is_stmt 0 view .LVU13
-  82 0046 0E4B     		ldr	r3, .L8+8
-  83 0048 4FF40052 		mov	r2, #8192
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 3
+   9:Core/Src/main.c ****     {
+  10:Core/Src/main.c ****         // Считываем значение с кнопки на пине B3
+  11:Core/Src/main.c ****         if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x08UL)) != 0)
+  12:Core/Src/main.c ****         {
+  13:Core/Src/main.c ****             if (was_changed == 0)
+  14:Core/Src/main.c ****             {
+  15:Core/Src/main.c ****                 counter++;
+  16:Core/Src/main.c ****                 if (counter == 3)
+  17:Core/Src/main.c ****                     counter = 0;
+  18:Core/Src/main.c ****             }
+  19:Core/Src/main.c ****             was_changed = 1;
+  20:Core/Src/main.c ****         }
+  21:Core/Src/main.c ****         else
+  22:Core/Src/main.c ****         {
+  23:Core/Src/main.c ****             was_changed = 0;
+  50              		.loc 1 23 25 view .LVU6
+  51 000c 0021     		movs	r1, #0
+  52              	.LVL2:
+  53              	.L3:
+  24:Core/Src/main.c ****         }
+  25:Core/Src/main.c **** 
+  26:Core/Src/main.c ****         if (counter == 0)
+  54              		.loc 1 26 9 is_stmt 1 view .LVU7
+  55              		.loc 1 26 12 is_stmt 0 view .LVU8
+  56 000e 002A     		cmp	r2, #0
+  57 0010 3CD1     		bne	.L5
+  58              	.LVL3:
+  59              	.L4:
+  27:Core/Src/main.c ****         {
+  28:Core/Src/main.c ****             // Считываем значение с кнопки на пине B4
+  29:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x10UL)) != 0)
+  60              		.loc 1 29 13 is_stmt 1 view .LVU9
+  61              		.loc 1 29 16 is_stmt 0 view .LVU10
+  62 0012 13F0100F 		tst	r3, #16
+  63 0016 27D0     		beq	.L6
+  30:Core/Src/main.c ****             {
+  31:Core/Src/main.c ****                 // Включаем свечение зеленого светодиода
+  32:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x01UL;
+  64              		.loc 1 32 17 is_stmt 1 view .LVU11
+  65              		.loc 1 32 54 is_stmt 0 view .LVU12
+  66 0018 4C4B     		ldr	r3, .L27
+  67 001a 0120     		movs	r0, #1
+  68 001c C3F81804 		str	r0, [r3, #1048]
+  69              	.L7:
+  33:Core/Src/main.c ****             }
+  34:Core/Src/main.c ****             else
+  35:Core/Src/main.c ****             {
+  36:Core/Src/main.c ****                 // Выключаем свечение зеленого светодиода
+  37:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x010000UL;
+  38:Core/Src/main.c ****             }
+  39:Core/Src/main.c **** 
+  40:Core/Src/main.c ****             // Считываем значение с кнопки на пине B5
+  41:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x20UL)) != 0)
+  70              		.loc 1 41 13 is_stmt 1 view .LVU13
+  71              		.loc 1 41 18 is_stmt 0 view .LVU14
+  72 0020 4A4B     		ldr	r3, .L27
+  73 0022 D3F81034 		ldr	r3, [r3, #1040]
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 3
 
 
-  84 004c C3F81828 		str	r2, [r3, #2072]
-  31:Core/Src/main.c **** 
-  32:Core/Src/main.c ****         // Точно такая же задержка во включенном состоянии
-  33:Core/Src/main.c ****         for (volatile uint32_t i = 0; i < 500000; i++) {
-  85              		.loc 1 33 9 is_stmt 1 view .LVU14
-  86              	.LBB3:
-  87              		.loc 1 33 14 view .LVU15
-  88              		.loc 1 33 32 is_stmt 0 view .LVU16
-  89 0050 0023     		movs	r3, #0
-  90 0052 0193     		str	r3, [sp, #4]
-  91              	.L4:
-  92              		.loc 1 33 41 is_stmt 1 discriminator 1 view .LVU17
-  93 0054 019A     		ldr	r2, [sp, #4]
-  94 0056 094B     		ldr	r3, .L8+4
-  95 0058 9A42     		cmp	r2, r3
-  96 005a 07D9     		bls	.L5
-  97              	.L6:
-  98              	.LBE3:
-  17:Core/Src/main.c ****         // --- 4. ВКЛЮЧАЕМ светодиод (подаем низкий уровень ч�
-  99              		.loc 1 17 5 view .LVU18
-  20:Core/Src/main.c **** 
- 100              		.loc 1 20 9 view .LVU19
-  20:Core/Src/main.c **** 
- 101              		.loc 1 20 45 is_stmt 0 view .LVU20
- 102 005c 084B     		ldr	r3, .L8+8
- 103 005e 4FF00052 		mov	r2, #536870912
- 104 0062 C3F81828 		str	r2, [r3, #2072]
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
- 105              		.loc 1 24 9 is_stmt 1 view .LVU21
- 106              	.LBB4:
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
- 107              		.loc 1 24 14 view .LVU22
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
- 108              		.loc 1 24 32 is_stmt 0 view .LVU23
- 109 0066 0023     		movs	r3, #0
- 110 0068 0093     		str	r3, [sp]
-  24:Core/Src/main.c ****             __asm__ volatile ("nop");
- 111              		.loc 1 24 9 view .LVU24
- 112 006a E8E7     		b	.L2
- 113              	.L5:
- 114              	.LBE4:
- 115              	.LBB5:
-  34:Core/Src/main.c ****             __asm__ volatile ("nop");
- 116              		.loc 1 34 13 is_stmt 1 view .LVU25
- 117              		.syntax unified
- 118              	@ 34 "Core/Src/main.c" 1
- 119 006c 00BF     		nop
- 120              	@ 0 "" 2
-  33:Core/Src/main.c ****             __asm__ volatile ("nop");
- 121              		.loc 1 33 52 discriminator 3 view .LVU26
- 122              		.thumb
- 123              		.syntax unified
- 124 006e 019B     		ldr	r3, [sp, #4]
- 125 0070 0133     		adds	r3, r3, #1
- 126 0072 0193     		str	r3, [sp, #4]
- 127 0074 EEE7     		b	.L4
- 128              	.L9:
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 4
+  74              		.loc 1 41 16 view .LVU15
+  75 0026 13F0200F 		tst	r3, #32
+  76 002a 23D0     		beq	.L8
+  42:Core/Src/main.c ****             {
+  43:Core/Src/main.c ****                 // Включаем свечение синего светодиода
+  44:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x02UL;
+  77              		.loc 1 44 17 is_stmt 1 view .LVU16
+  78              		.loc 1 44 54 is_stmt 0 view .LVU17
+  79 002c 474B     		ldr	r3, .L27
+  80 002e 0220     		movs	r0, #2
+  81 0030 C3F81804 		str	r0, [r3, #1048]
+  82              	.L9:
+  45:Core/Src/main.c ****             }
+  46:Core/Src/main.c ****             else
+  47:Core/Src/main.c ****             {
+  48:Core/Src/main.c ****                 // Выключаем свечение синего светодиода
+  49:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x020000UL;
+  50:Core/Src/main.c ****             }
+  51:Core/Src/main.c **** 
+  52:Core/Src/main.c ****             // Считываем значение с кнопки на пине B6
+  53:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x40UL)) != 0)
+  83              		.loc 1 53 13 is_stmt 1 view .LVU18
+  84              		.loc 1 53 18 is_stmt 0 view .LVU19
+  85 0034 454B     		ldr	r3, .L27
+  86 0036 D3F81034 		ldr	r3, [r3, #1040]
+  87              		.loc 1 53 16 view .LVU20
+  88 003a 13F0400F 		tst	r3, #64
+  89 003e 1FD0     		beq	.L10
+  54:Core/Src/main.c ****             {
+  55:Core/Src/main.c ****                 // Включаем свечение красного светодиода
+  56:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x04UL;
+  90              		.loc 1 56 17 is_stmt 1 view .LVU21
+  91              		.loc 1 56 54 is_stmt 0 view .LVU22
+  92 0040 424B     		ldr	r3, .L27
+  93 0042 0420     		movs	r0, #4
+  94 0044 C3F81804 		str	r0, [r3, #1048]
+  95              	.L2:
+  96              	.LVL4:
+   8:Core/Src/main.c ****     {
+  97              		.loc 1 8 5 is_stmt 1 view .LVU23
+  11:Core/Src/main.c ****         {
+  98              		.loc 1 11 9 view .LVU24
+  11:Core/Src/main.c ****         {
+  99              		.loc 1 11 14 is_stmt 0 view .LVU25
+ 100 0048 404B     		ldr	r3, .L27
+ 101 004a D3F81034 		ldr	r3, [r3, #1040]
+  11:Core/Src/main.c ****         {
+ 102              		.loc 1 11 12 view .LVU26
+ 103 004e 13F0080F 		tst	r3, #8
+ 104 0052 DBD0     		beq	.L23
+  13:Core/Src/main.c ****             {
+ 105              		.loc 1 13 13 is_stmt 1 view .LVU27
+  13:Core/Src/main.c ****             {
+ 106              		.loc 1 13 16 is_stmt 0 view .LVU28
+ 107 0054 0029     		cmp	r1, #0
+ 108 0056 DAD1     		bne	.L3
+  15:Core/Src/main.c ****                 if (counter == 3)
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 4
 
 
- 129 0076 00BF     		.align	2
- 130              	.L8:
- 131 0078 00300240 		.word	1073885184
- 132 007c 1FA10700 		.word	499999
- 133 0080 00000240 		.word	1073872896
- 134              	.LBE5:
- 135              		.cfi_endproc
- 136              	.LFE0:
- 138              		.text
- 139              	.Letext0:
- 140              		.file 2 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/machine/_default_t
- 141              		.file 3 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s 			page 5
+ 109              		.loc 1 15 17 is_stmt 1 view .LVU29
+  15:Core/Src/main.c ****                 if (counter == 3)
+ 110              		.loc 1 15 24 is_stmt 0 view .LVU30
+ 111 0058 0132     		adds	r2, r2, #1
+ 112              	.LVL5:
+  16:Core/Src/main.c ****                     counter = 0;
+ 113              		.loc 1 16 17 is_stmt 1 view .LVU31
+  16:Core/Src/main.c ****                     counter = 0;
+ 114              		.loc 1 16 20 is_stmt 0 view .LVU32
+ 115 005a 032A     		cmp	r2, #3
+ 116 005c 01D0     		beq	.L24
+  19:Core/Src/main.c ****         }
+ 117              		.loc 1 19 25 view .LVU33
+ 118 005e 0121     		movs	r1, #1
+ 119              	.LVL6:
+  19:Core/Src/main.c ****         }
+ 120              		.loc 1 19 25 view .LVU34
+ 121 0060 D5E7     		b	.L3
+ 122              	.LVL7:
+ 123              	.L24:
+  17:Core/Src/main.c ****             }
+ 124              		.loc 1 17 29 view .LVU35
+ 125 0062 0A46     		mov	r2, r1
+ 126              	.LVL8:
+  19:Core/Src/main.c ****         }
+ 127              		.loc 1 19 25 view .LVU36
+ 128 0064 0121     		movs	r1, #1
+ 129              	.LVL9:
+  19:Core/Src/main.c ****         }
+ 130              		.loc 1 19 25 view .LVU37
+ 131 0066 D4E7     		b	.L4
+ 132              	.LVL10:
+ 133              	.L6:
+  37:Core/Src/main.c ****             }
+ 134              		.loc 1 37 17 is_stmt 1 view .LVU38
+  37:Core/Src/main.c ****             }
+ 135              		.loc 1 37 54 is_stmt 0 view .LVU39
+ 136 0068 384B     		ldr	r3, .L27
+ 137 006a 4FF48030 		mov	r0, #65536
+ 138 006e C3F81804 		str	r0, [r3, #1048]
+ 139 0072 D5E7     		b	.L7
+ 140              	.L8:
+  49:Core/Src/main.c ****             }
+ 141              		.loc 1 49 17 is_stmt 1 view .LVU40
+  49:Core/Src/main.c ****             }
+ 142              		.loc 1 49 54 is_stmt 0 view .LVU41
+ 143 0074 354B     		ldr	r3, .L27
+ 144 0076 4FF40030 		mov	r0, #131072
+ 145 007a C3F81804 		str	r0, [r3, #1048]
+ 146 007e D9E7     		b	.L9
+ 147              	.L10:
+  57:Core/Src/main.c ****             }
+  58:Core/Src/main.c ****             else
+  59:Core/Src/main.c ****             {
+  60:Core/Src/main.c ****                 // Выключаем свечение красного светодиода
+  61:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x040000UL;
+ 148              		.loc 1 61 17 is_stmt 1 view .LVU42
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 5
+
+
+ 149              		.loc 1 61 54 is_stmt 0 view .LVU43
+ 150 0080 324B     		ldr	r3, .L27
+ 151 0082 4FF48020 		mov	r0, #262144
+ 152 0086 C3F81804 		str	r0, [r3, #1048]
+ 153 008a DDE7     		b	.L2
+ 154              	.LVL11:
+ 155              	.L5:
+  62:Core/Src/main.c ****             }
+  63:Core/Src/main.c ****         }
+  64:Core/Src/main.c ****         else if (counter == 1)
+ 156              		.loc 1 64 14 is_stmt 1 view .LVU44
+ 157              		.loc 1 64 17 is_stmt 0 view .LVU45
+ 158 008c 012A     		cmp	r2, #1
+ 159 008e 1DD0     		beq	.L26
+  65:Core/Src/main.c ****         {
+  66:Core/Src/main.c ****             // Считываем значение с кнопки на пине B4
+  67:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x10UL)) != 0)
+  68:Core/Src/main.c ****             {
+  69:Core/Src/main.c ****                 // Включаем свечение красного светодиода
+  70:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x04UL;
+  71:Core/Src/main.c ****             }
+  72:Core/Src/main.c ****             else
+  73:Core/Src/main.c ****             {
+  74:Core/Src/main.c ****                 // Выключаем свечение красного светодиода
+  75:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x040000UL;
+  76:Core/Src/main.c ****             }
+  77:Core/Src/main.c **** 
+  78:Core/Src/main.c ****             // Считываем значение с кнопки на пине B5
+  79:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x20UL)) != 0)
+  80:Core/Src/main.c ****             {
+  81:Core/Src/main.c ****                 // Включаем свечение зеленого светодиода
+  82:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x01UL;
+  83:Core/Src/main.c ****             }
+  84:Core/Src/main.c ****             else
+  85:Core/Src/main.c ****             {
+  86:Core/Src/main.c ****                 // Выключаем свечение зеленого светодиода
+  87:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x010000UL;
+  88:Core/Src/main.c ****             }
+  89:Core/Src/main.c **** 
+  90:Core/Src/main.c ****             // Считываем значение с кнопки на пине B6
+  91:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x40UL)) != 0)
+  92:Core/Src/main.c ****             {
+  93:Core/Src/main.c ****                 // Включаем свечение синего светодиода
+  94:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x02UL;
+  95:Core/Src/main.c ****             }
+  96:Core/Src/main.c ****             else
+  97:Core/Src/main.c ****             {
+  98:Core/Src/main.c ****                 
+  99:Core/Src/main.c ****                 // Выключаем свечение синего светодиода
+ 100:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x020000UL;
+ 101:Core/Src/main.c ****             }
+ 102:Core/Src/main.c ****         }
+ 103:Core/Src/main.c ****         else if (counter == 2)
+ 160              		.loc 1 103 14 is_stmt 1 view .LVU46
+ 161              		.loc 1 103 17 is_stmt 0 view .LVU47
+ 162 0090 022A     		cmp	r2, #2
+ 163 0092 D9D1     		bne	.L2
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 6
+
+
+ 104:Core/Src/main.c ****         {
+ 105:Core/Src/main.c ****             // Считываем значение с кнопки на пине B4
+ 106:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x10UL)) != 0)
+ 164              		.loc 1 106 13 is_stmt 1 view .LVU48
+ 165              		.loc 1 106 16 is_stmt 0 view .LVU49
+ 166 0094 13F0100F 		tst	r3, #16
+ 167 0098 46D0     		beq	.L18
+ 107:Core/Src/main.c ****             {
+ 108:Core/Src/main.c ****                 // Включаем свечение синего светодиода
+ 109:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x02UL;
+ 168              		.loc 1 109 17 is_stmt 1 view .LVU50
+ 169              		.loc 1 109 54 is_stmt 0 view .LVU51
+ 170 009a 2C4B     		ldr	r3, .L27
+ 171 009c 0220     		movs	r0, #2
+ 172 009e C3F81804 		str	r0, [r3, #1048]
+ 173              	.L19:
+ 110:Core/Src/main.c ****             }
+ 111:Core/Src/main.c ****             else
+ 112:Core/Src/main.c ****             {
+ 113:Core/Src/main.c ****                 // Выключаем свечение синего светодиода
+ 114:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x020000UL;
+ 115:Core/Src/main.c ****             }
+ 116:Core/Src/main.c **** 
+ 117:Core/Src/main.c ****             // Считываем значение с кнопки на пине B5
+ 118:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x20UL)) != 0)
+ 174              		.loc 1 118 13 is_stmt 1 view .LVU52
+ 175              		.loc 1 118 18 is_stmt 0 view .LVU53
+ 176 00a2 2A4B     		ldr	r3, .L27
+ 177 00a4 D3F81034 		ldr	r3, [r3, #1040]
+ 178              		.loc 1 118 16 view .LVU54
+ 179 00a8 13F0200F 		tst	r3, #32
+ 180 00ac 42D0     		beq	.L20
+ 119:Core/Src/main.c ****             {
+ 120:Core/Src/main.c ****                 // Включаем свечение красного светодиода
+ 121:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x04UL;
+ 181              		.loc 1 121 17 is_stmt 1 view .LVU55
+ 182              		.loc 1 121 54 is_stmt 0 view .LVU56
+ 183 00ae 274B     		ldr	r3, .L27
+ 184 00b0 0420     		movs	r0, #4
+ 185 00b2 C3F81804 		str	r0, [r3, #1048]
+ 186              	.L21:
+ 122:Core/Src/main.c ****             }
+ 123:Core/Src/main.c ****             else
+ 124:Core/Src/main.c ****             {
+ 125:Core/Src/main.c ****                 // Выключаем свечение красного светодиода
+ 126:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x040000UL;
+ 127:Core/Src/main.c ****             }
+ 128:Core/Src/main.c **** 
+ 129:Core/Src/main.c ****             // Считываем значение с кнопки на пине B6
+ 130:Core/Src/main.c ****             if ((*(uint32_t *)(0x40020400UL + 0x10UL) & (0x40UL)) != 0)
+ 187              		.loc 1 130 13 is_stmt 1 view .LVU57
+ 188              		.loc 1 130 18 is_stmt 0 view .LVU58
+ 189 00b6 254B     		ldr	r3, .L27
+ 190 00b8 D3F81034 		ldr	r3, [r3, #1040]
+ 191              		.loc 1 130 16 view .LVU59
+ 192 00bc 13F0400F 		tst	r3, #64
+ 193 00c0 3ED0     		beq	.L22
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 7
+
+
+ 131:Core/Src/main.c ****             {
+ 132:Core/Src/main.c ****                 // Включаем свечение зеленого светодиода
+ 133:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x01UL;
+ 194              		.loc 1 133 17 is_stmt 1 view .LVU60
+ 195              		.loc 1 133 54 is_stmt 0 view .LVU61
+ 196 00c2 224B     		ldr	r3, .L27
+ 197 00c4 0120     		movs	r0, #1
+ 198 00c6 C3F81804 		str	r0, [r3, #1048]
+ 199 00ca BDE7     		b	.L2
+ 200              	.L26:
+  67:Core/Src/main.c ****             {
+ 201              		.loc 1 67 13 is_stmt 1 view .LVU62
+  67:Core/Src/main.c ****             {
+ 202              		.loc 1 67 16 is_stmt 0 view .LVU63
+ 203 00cc 13F0100F 		tst	r3, #16
+ 204 00d0 18D0     		beq	.L13
+  70:Core/Src/main.c ****             }
+ 205              		.loc 1 70 17 is_stmt 1 view .LVU64
+  70:Core/Src/main.c ****             }
+ 206              		.loc 1 70 54 is_stmt 0 view .LVU65
+ 207 00d2 1E4B     		ldr	r3, .L27
+ 208 00d4 0420     		movs	r0, #4
+ 209 00d6 C3F81804 		str	r0, [r3, #1048]
+ 210              	.L14:
+  79:Core/Src/main.c ****             {
+ 211              		.loc 1 79 13 is_stmt 1 view .LVU66
+  79:Core/Src/main.c ****             {
+ 212              		.loc 1 79 18 is_stmt 0 view .LVU67
+ 213 00da 1C4B     		ldr	r3, .L27
+ 214 00dc D3F81034 		ldr	r3, [r3, #1040]
+  79:Core/Src/main.c ****             {
+ 215              		.loc 1 79 16 view .LVU68
+ 216 00e0 13F0200F 		tst	r3, #32
+ 217 00e4 14D0     		beq	.L15
+  82:Core/Src/main.c ****             }
+ 218              		.loc 1 82 17 is_stmt 1 view .LVU69
+  82:Core/Src/main.c ****             }
+ 219              		.loc 1 82 54 is_stmt 0 view .LVU70
+ 220 00e6 194B     		ldr	r3, .L27
+ 221 00e8 0120     		movs	r0, #1
+ 222 00ea C3F81804 		str	r0, [r3, #1048]
+ 223              	.L16:
+  91:Core/Src/main.c ****             {
+ 224              		.loc 1 91 13 is_stmt 1 view .LVU71
+  91:Core/Src/main.c ****             {
+ 225              		.loc 1 91 18 is_stmt 0 view .LVU72
+ 226 00ee 174B     		ldr	r3, .L27
+ 227 00f0 D3F81034 		ldr	r3, [r3, #1040]
+  91:Core/Src/main.c ****             {
+ 228              		.loc 1 91 16 view .LVU73
+ 229 00f4 13F0400F 		tst	r3, #64
+ 230 00f8 10D0     		beq	.L17
+  94:Core/Src/main.c ****             }
+ 231              		.loc 1 94 17 is_stmt 1 view .LVU74
+  94:Core/Src/main.c ****             }
+ 232              		.loc 1 94 54 is_stmt 0 view .LVU75
+ 233 00fa 144B     		ldr	r3, .L27
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 8
+
+
+ 234 00fc 0220     		movs	r0, #2
+ 235 00fe C3F81804 		str	r0, [r3, #1048]
+ 236 0102 A1E7     		b	.L2
+ 237              	.L13:
+  75:Core/Src/main.c ****             }
+ 238              		.loc 1 75 17 is_stmt 1 view .LVU76
+  75:Core/Src/main.c ****             }
+ 239              		.loc 1 75 54 is_stmt 0 view .LVU77
+ 240 0104 114B     		ldr	r3, .L27
+ 241 0106 4FF48020 		mov	r0, #262144
+ 242 010a C3F81804 		str	r0, [r3, #1048]
+ 243 010e E4E7     		b	.L14
+ 244              	.L15:
+  87:Core/Src/main.c ****             }
+ 245              		.loc 1 87 17 is_stmt 1 view .LVU78
+  87:Core/Src/main.c ****             }
+ 246              		.loc 1 87 54 is_stmt 0 view .LVU79
+ 247 0110 0E4B     		ldr	r3, .L27
+ 248 0112 4FF48030 		mov	r0, #65536
+ 249 0116 C3F81804 		str	r0, [r3, #1048]
+ 250 011a E8E7     		b	.L16
+ 251              	.L17:
+ 100:Core/Src/main.c ****             }
+ 252              		.loc 1 100 17 is_stmt 1 view .LVU80
+ 100:Core/Src/main.c ****             }
+ 253              		.loc 1 100 54 is_stmt 0 view .LVU81
+ 254 011c 0B4B     		ldr	r3, .L27
+ 255 011e 4FF40030 		mov	r0, #131072
+ 256 0122 C3F81804 		str	r0, [r3, #1048]
+ 257 0126 8FE7     		b	.L2
+ 258              	.L18:
+ 114:Core/Src/main.c ****             }
+ 259              		.loc 1 114 17 is_stmt 1 view .LVU82
+ 114:Core/Src/main.c ****             }
+ 260              		.loc 1 114 54 is_stmt 0 view .LVU83
+ 261 0128 084B     		ldr	r3, .L27
+ 262 012a 4FF40030 		mov	r0, #131072
+ 263 012e C3F81804 		str	r0, [r3, #1048]
+ 264 0132 B6E7     		b	.L19
+ 265              	.L20:
+ 126:Core/Src/main.c ****             }
+ 266              		.loc 1 126 17 is_stmt 1 view .LVU84
+ 126:Core/Src/main.c ****             }
+ 267              		.loc 1 126 54 is_stmt 0 view .LVU85
+ 268 0134 054B     		ldr	r3, .L27
+ 269 0136 4FF48020 		mov	r0, #262144
+ 270 013a C3F81804 		str	r0, [r3, #1048]
+ 271 013e BAE7     		b	.L21
+ 272              	.L22:
+ 134:Core/Src/main.c ****             }
+ 135:Core/Src/main.c ****             else
+ 136:Core/Src/main.c ****             {
+ 137:Core/Src/main.c ****                 // Выключаем свечение зеленого светодиода
+ 138:Core/Src/main.c ****                 *(uint32_t *)(0x40020400UL + 0x18UL) = 0x010000UL;
+ 273              		.loc 1 138 17 is_stmt 1 view .LVU86
+ 274              		.loc 1 138 54 is_stmt 0 view .LVU87
+ 275 0140 024B     		ldr	r3, .L27
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 9
+
+
+ 276 0142 4FF48030 		mov	r0, #65536
+ 277 0146 C3F81804 		str	r0, [r3, #1048]
+ 278 014a 7DE7     		b	.L2
+ 279              	.L28:
+ 280              		.align	2
+ 281              	.L27:
+ 282 014c 00000240 		.word	1073872896
+ 283              		.cfi_endproc
+ 284              	.LFE0:
+ 286              		.text
+ 287              	.Letext0:
+ 288              		.file 2 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/machine/_default_t
+ 289              		.file 3 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 290              		.file 4 "Core/Inc/init.h"
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s 			page 10
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:21     .text.main:00000000 $t
-C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:27     .text.main:00000000 main
-C:\Users\Aleksei\AppData\Local\Temp\ccpCmHHk.s:131    .text.main:00000078 $d
+C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s:21     .text.main:00000000 $t
+C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s:27     .text.main:00000000 main
+C:\Users\Aleksei\AppData\Local\Temp\ccU62b46.s:282    .text.main:0000014c $d
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+gpio_init
