@@ -1,141 +1,84 @@
-#include <stdint.h>
+
 #include "init.h"
+#include <stdlib.h>
+void Led_on_off(int counter);
+uint32_t Pin_sum(uint32_t Led_array[], int counter);
+int counter = 0;
+int Led_amount = 1;
+int timer1 = 0;
+int timer2 = 0;
+int timer3 = 0;
+int timer4 = 0;
+int flag = 0;
 int main(void)
 {
     gpio_init();
-    int counter = 0;
-    int was_changed = 0;
+
     while (1)
     {
-        // Считываем значение с кнопки на пине B3
-        if (READ_GPIO_B3 != 0)
+        if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
         {
-            if (was_changed == 0)
-            {
-                counter++;
-                if (counter == 3)
-                    counter = 0;
-            }
-            was_changed = 1;
+            Led_amount += 1;
+            flag = 1;
         }
-        else
-        {
-            was_changed = 0;
+        else{
+            flag = 0;
         }
 
-        if (counter == 0)
+        if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
         {
-            // Считываем значение с кнопки на пине B4
-            if (READ_GPIO_B4 != 0)
-            {
-                // Включаем свечение зеленого светодиода
-                SET_GPIO_B0;
-            }
-            else
-            {
-                // Выключаем свечение зеленого светодиода
-                RESET_GPIO_B0;
-            }
-
-            // Считываем значение с кнопки на пине B5
-            if (READ_GPIO_B5 != 0)
-            {
-                // Включаем свечение синего светодиода
-                SET_GPIO_B1;
-            }
-            else
-            {
-                // Выключаем свечение синего светодиода
-                RESET_GPIO_B1;
-            }
-
-            // Считываем значение с кнопки на пине B6
-            if (READ_GPIO_B6 != 0)
-            {
-                // Включаем свечение красного светодиода
-                SET_GPIO_B2;
-            }
-            else
-            {
-                // Выключаем свечение красного светодиода
-                RESET_GPIO_B2;
-            }
+            Led_amount -= 1;
+            flag = 1;
         }
-        else if (counter == 1)
-        {
-            // Считываем значение с кнопки на пине B4
-            if (READ_GPIO_B4 != 0)
-            {
-                // Включаем свечение красного светодиода
-                SET_GPIO_B2;
-            }
-            else
-            {
-                // Выключаем свечение красного светодиода
-                RESET_GPIO_B2;
-            }
-
-            // Считываем значение с кнопки на пине B5
-            if (READ_GPIO_B5 != 0)
-            {
-               // Включаем свечение зеленого светодиода
-                SET_GPIO_B0;
-            }
-            else
-            {
-                // Выключаем свечение зеленого светодиода
-                RESET_GPIO_B0;
-            }
-
-            // Считываем значение с кнопки на пине B6
-            if (READ_GPIO_B6 != 0)
-            {
-                // Включаем свечение синего светодиода
-                SET_GPIO_B1;
-            }
-            else
-            {
-                // Выключаем свечение синего светодиода
-                RESET_GPIO_B1;
-            }
+        else{
+            flag = 0;
         }
-        else if (counter == 2)
+
+
+        if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
         {
-            // Считываем значение с кнопки на пине B4
-            if (READ_GPIO_B4 != 0)
-            {
-               // Включаем свечение синего светодиода
-                SET_GPIO_B1;
-            }
-            else
-            {
-                // Выключаем свечение синего светодиода
-                RESET_GPIO_B1;
-            }
+            counter += Led_amount;
+            flag = 1;
+        }
+        else{
+            flag = 0;
+        }
 
-            // Считываем значение с кнопки на пине B5
-            if (READ_GPIO_B5 != 0)
-            {
-                // Включаем свечение красного светодиода
-                SET_GPIO_B2;
-            }
-            else
-            {
-                // Выключаем свечение красного светодиода
-                RESET_GPIO_B2;
-            }
+        if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
+        {
+            counter -= Led_amount;
+            flag = 1;
+        }
+        else{
+            flag = 0;
+        }
 
-            // Считываем значение с кнопки на пине B6
-            if (READ_GPIO_B6 != 0)
-            {
-                // Включаем свечение зеленого светодиода
-                SET_GPIO_B0;
-            }
-            else
-            {
-                // Выключаем свечение зеленого светодиода
-                RESET_GPIO_B0;
-            }
+        
+        Led_on_off(counter);
+    }
+}
+void Led_on_off(int counter)
+{
+    uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_BSRR_BS13, GPIO_BSRR_BS12};
+    uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO_BSRR_BR13, GPIO_BSRR_BR12};
+
+    SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 6));
+    if(counter > 0){
+        SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, counter));
+    }
+    
+}
+
+uint32_t Pin_sum(uint32_t Led_array[], int counter)
+{
+    uint32_t final_mask = 0x00;
+    if (counter > 0)
+    {
+        for (int i = 0; i < counter; i++)
+        {
+            final_mask |= Led_array[i];
         }
     }
+
+    return final_mask;
 }

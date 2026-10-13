@@ -1,12 +1,11 @@
 #include "init.h"
-#include <stdint.h>
-void gpio_init(void){
-// Включение тактирования портов B
-RCC_GPIO_EN |= RCC_GPIOB_EN;
-// Настройка портов B0, B1, B2 на выход
-GPIOB_MODER |= GPIO_MODE_B0_OUT|GPIO_MODE_B1_OUT|GPIO_MODE_B2_OUT;
-// Настройка типа выхода данных портов как PP (Push-Pull)
-GPIOB_OTYPER |= 0x00UL;
-// Настройка скорости работы пинов B0, B1, B2
-GPIOB_OSPEEDR |= GPIO_SPEED_B0_MID|GPIO_SPEED_B1_MID|GPIO_SPEED_B2_MID;
+void gpio_init(void)
+{
+    SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+
+    SET_BIT(GPIOB->MODER, GPIO_MODER_MODE0_0 | GPIO_MODER_MODE1_0 | GPIO_MODER_MODE2_0 |
+                              GPIO_MODER_MODE14_0 | GPIO_MODER_MODE13_0 | GPIO_MODER_MODE12_0);
+
+    SET_BIT(GPIOB->OSPEEDR, GPIO_OSPEEDER_OSPEEDR0_0 | GPIO_OSPEEDR_OSPEED1_0 | GPIO_OSPEEDR_OSPEED2_0 |
+                                GPIO_OSPEEDER_OSPEEDR14_0 | GPIO_OSPEEDR_OSPEED13_0 | GPIO_OSPEEDR_OSPEED12_0);
 }
