@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 1
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -32,668 +32,998 @@ ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 1
    1:Core/Src/main.c **** 
    2:Core/Src/main.c **** #include "init.h"
    3:Core/Src/main.c **** #include <stdlib.h>
-   4:Core/Src/main.c **** void Led_on_off(int counter);
-   5:Core/Src/main.c **** uint32_t Pin_sum(uint32_t Led_array[], int counter);
+   4:Core/Src/main.c **** #include <stdbool.h>
+   5:Core/Src/main.c **** 
    6:Core/Src/main.c **** int counter = 0;
-   7:Core/Src/main.c **** int Led_amount = 1;
-   8:Core/Src/main.c **** int Was_changed1 = 0;
-   9:Core/Src/main.c **** int Was_changed2 = 0;
-  10:Core/Src/main.c **** int Was_changed3 = 0;
-  11:Core/Src/main.c **** int Was_changed4 = 0;
-  12:Core/Src/main.c **** int flag = 0;
-  13:Core/Src/main.c **** int main(void)
-  14:Core/Src/main.c **** {
-  15:Core/Src/main.c ****     gpio_init();
-  16:Core/Src/main.c **** 
-  17:Core/Src/main.c ****     while (1)
-  18:Core/Src/main.c ****     {
-  19:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
-  20:Core/Src/main.c ****         {
-  21:Core/Src/main.c ****             if (Was_changed1 == 0)
-  22:Core/Src/main.c ****             {
-  23:Core/Src/main.c ****                 Led_amount += 1;
-  24:Core/Src/main.c ****                 if(Led_amount > 6){Led_amount = 6;}
-  25:Core/Src/main.c ****             }
-  26:Core/Src/main.c ****             Was_changed1 = 1;
-  27:Core/Src/main.c ****         }
-  28:Core/Src/main.c ****         else
-  29:Core/Src/main.c ****         {
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 2
+   7:Core/Src/main.c **** int cursor = 0;
+   8:Core/Src/main.c **** unsigned char mask = 0x00;
+   9:Core/Src/main.c **** int Led_amount = 1;
+  10:Core/Src/main.c **** int Was_changed1 = 0;
+  11:Core/Src/main.c **** int Was_changed2 = 0;
+  12:Core/Src/main.c **** int Was_changed3 = 0;
+  13:Core/Src/main.c **** int Was_changed4 = 0;
+  14:Core/Src/main.c **** int flag = 0;
+  15:Core/Src/main.c **** void Led_step(int step, int direction);
+  16:Core/Src/main.c **** uint32_t Pin_sum(uint32_t Led_array[], unsigned char mask);
+  17:Core/Src/main.c **** int main(void)
+  18:Core/Src/main.c **** {
+  19:Core/Src/main.c ****     gpio_init();
+  20:Core/Src/main.c **** 
+  21:Core/Src/main.c ****     while (1)
+  22:Core/Src/main.c ****     {
+  23:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
+  24:Core/Src/main.c ****         {
+  25:Core/Src/main.c ****             if (Was_changed1 == 0)
+  26:Core/Src/main.c ****             {
+  27:Core/Src/main.c ****                 Led_amount += 1;
+  28:Core/Src/main.c ****                 if (Led_amount > 6)
+  29:Core/Src/main.c ****                 {
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 2
 
 
-  30:Core/Src/main.c ****             Was_changed1 = 0;
-  31:Core/Src/main.c ****         }
-  32:Core/Src/main.c **** 
-  33:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
-  34:Core/Src/main.c ****         {
-  35:Core/Src/main.c ****             if (Was_changed2 == 0)
-  36:Core/Src/main.c ****             {
-  37:Core/Src/main.c ****                 Led_amount -= 1;
-  38:Core/Src/main.c ****                 if(Led_amount<0){Led_amount=0;}
-  39:Core/Src/main.c ****             }
-  40:Core/Src/main.c ****             Was_changed2 = 1;
-  41:Core/Src/main.c ****         }
-  42:Core/Src/main.c ****         else
-  43:Core/Src/main.c ****         {
-  44:Core/Src/main.c ****             Was_changed2 = 0;
-  45:Core/Src/main.c ****         }
-  46:Core/Src/main.c **** 
-  47:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
-  48:Core/Src/main.c ****         {
-  49:Core/Src/main.c ****             if (Was_changed3 == 0)
-  50:Core/Src/main.c ****             {
-  51:Core/Src/main.c ****                 counter += Led_amount;
-  52:Core/Src/main.c ****                 if(counter>6){counter = 6;}
-  53:Core/Src/main.c ****             }
-  54:Core/Src/main.c ****             Was_changed3 = 1;
+  30:Core/Src/main.c ****                     Led_amount = 6;
+  31:Core/Src/main.c ****                 }
+  32:Core/Src/main.c ****             }
+  33:Core/Src/main.c ****             Was_changed1 = 1;
+  34:Core/Src/main.c ****         }
+  35:Core/Src/main.c ****         else
+  36:Core/Src/main.c ****         {
+  37:Core/Src/main.c ****             Was_changed1 = 0;
+  38:Core/Src/main.c ****         }
+  39:Core/Src/main.c **** 
+  40:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
+  41:Core/Src/main.c ****         {
+  42:Core/Src/main.c ****             if (Was_changed2 == 0)
+  43:Core/Src/main.c ****             {
+  44:Core/Src/main.c ****                 Led_amount -= 1;
+  45:Core/Src/main.c ****                 if (Led_amount < 1)
+  46:Core/Src/main.c ****                 {
+  47:Core/Src/main.c ****                     Led_amount = 1;
+  48:Core/Src/main.c ****                 }
+  49:Core/Src/main.c ****             }
+  50:Core/Src/main.c ****             Was_changed2 = 1;
+  51:Core/Src/main.c ****         }
+  52:Core/Src/main.c ****         else
+  53:Core/Src/main.c ****         {
+  54:Core/Src/main.c ****             Was_changed2 = 0;
   55:Core/Src/main.c ****         }
-  56:Core/Src/main.c ****         else
-  57:Core/Src/main.c ****         {
-  58:Core/Src/main.c ****             Was_changed3 = 0;
-  59:Core/Src/main.c ****         }
-  60:Core/Src/main.c **** 
-  61:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
-  62:Core/Src/main.c ****         {
-  63:Core/Src/main.c ****             if (Was_changed4 == 0)
-  64:Core/Src/main.c ****             {
-  65:Core/Src/main.c ****                 counter -= Led_amount;
-  66:Core/Src/main.c ****                 if(counter<0){counter=0;}
-  67:Core/Src/main.c ****             }
-  68:Core/Src/main.c ****             Was_changed4 = 1;
-  69:Core/Src/main.c ****         }
-  70:Core/Src/main.c ****         else
+  56:Core/Src/main.c **** 
+  57:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
+  58:Core/Src/main.c ****         {
+  59:Core/Src/main.c ****             if (Was_changed3 == 0)
+  60:Core/Src/main.c ****             {
+  61:Core/Src/main.c ****                 Led_step(Led_amount, 1);
+  62:Core/Src/main.c ****             }
+  63:Core/Src/main.c ****             Was_changed3 = 1;
+  64:Core/Src/main.c ****         }
+  65:Core/Src/main.c ****         else
+  66:Core/Src/main.c ****         {
+  67:Core/Src/main.c ****             Was_changed3 = 0;
+  68:Core/Src/main.c ****         }
+  69:Core/Src/main.c **** 
+  70:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
   71:Core/Src/main.c ****         {
-  72:Core/Src/main.c ****             Was_changed4 = 0;
-  73:Core/Src/main.c ****         }
-  74:Core/Src/main.c **** 
-  75:Core/Src/main.c ****         Led_on_off(counter);
-  76:Core/Src/main.c ****     }
-  77:Core/Src/main.c **** }
-  78:Core/Src/main.c **** void Led_on_off(int counter)
-  79:Core/Src/main.c **** {
-  80:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
-  81:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
-  82:Core/Src/main.c **** 
-  83:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 6));
-  84:Core/Src/main.c ****     if (counter > 0)
-  85:Core/Src/main.c ****     {
-  86:Core/Src/main.c ****         SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, counter));
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 3
+  72:Core/Src/main.c ****             if (Was_changed4 == 0)
+  73:Core/Src/main.c ****             {
+  74:Core/Src/main.c ****                 Led_step(Led_amount, 2);
+  75:Core/Src/main.c ****             }
+  76:Core/Src/main.c ****             Was_changed4 = 1;
+  77:Core/Src/main.c ****         }
+  78:Core/Src/main.c ****         else
+  79:Core/Src/main.c ****         {
+  80:Core/Src/main.c ****             Was_changed4 = 0;
+  81:Core/Src/main.c ****         }
+  82:Core/Src/main.c ****     }
+  83:Core/Src/main.c **** }
+  84:Core/Src/main.c **** void Led_step(int step, int direction)
+  85:Core/Src/main.c **** {
+  86:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 3
 
 
-  87:Core/Src/main.c ****     }
-  88:Core/Src/main.c **** }
-  89:Core/Src/main.c **** 
-  90:Core/Src/main.c **** uint32_t Pin_sum(uint32_t Led_array[], int counter)
-  91:Core/Src/main.c **** {
-  30              		.loc 1 91 1 view -0
+  87:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
+  88:Core/Src/main.c **** 
+  89:Core/Src/main.c ****     if (step == 0)
+  90:Core/Src/main.c ****         return;
+  91:Core/Src/main.c **** 
+  92:Core/Src/main.c ****     if (direction == 1)
+  93:Core/Src/main.c ****     {
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+  95:Core/Src/main.c ****         {
+  96:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+  97:Core/Src/main.c ****             mask = 0x00;
+  98:Core/Src/main.c ****         }
+  99:Core/Src/main.c ****         for (int i = cursor; i < cursor + step; i++)
+ 100:Core/Src/main.c ****         {
+ 101:Core/Src/main.c ****             mask |= (1 << (i % 6));
+ 102:Core/Src/main.c ****         }
+ 103:Core/Src/main.c **** 
+ 104:Core/Src/main.c ****         cursor = (cursor + step) % 6;
+ 105:Core/Src/main.c ****     }
+ 106:Core/Src/main.c ****     else if (direction == 2)
+ 107:Core/Src/main.c ****     {
+ 108:Core/Src/main.c ****         if (cursor - step < 0)
+ 109:Core/Src/main.c ****         {
+ 110:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+ 111:Core/Src/main.c ****             mask = 0x00;
+ 112:Core/Src/main.c **** 
+ 113:Core/Src/main.c ****             int new_cursor = 6 + (cursor - step);
+ 114:Core/Src/main.c **** 
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 116:Core/Src/main.c ****             {
+ 117:Core/Src/main.c ****                 mask |= (1 << i);
+ 118:Core/Src/main.c ****             }
+ 119:Core/Src/main.c **** 
+ 120:Core/Src/main.c ****             cursor = new_cursor;
+ 121:Core/Src/main.c **** 
+ 122:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 123:Core/Src/main.c ****         }
+ 124:Core/Src/main.c ****         else
+ 125:Core/Src/main.c ****         {
+ 126:Core/Src/main.c ****             unsigned char delete_mask = 0x00;
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 128:Core/Src/main.c ****             {
+ 129:Core/Src/main.c ****                 mask &= ~(1 << i);
+ 130:Core/Src/main.c ****                 delete_mask |= (1<<i);
+ 131:Core/Src/main.c ****             }
+ 132:Core/Src/main.c **** 
+ 133:Core/Src/main.c ****             cursor = cursor - step;
+ 134:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, delete_mask));
+ 135:Core/Src/main.c ****         }
+ 136:Core/Src/main.c ****     }
+ 137:Core/Src/main.c ****     
+ 138:Core/Src/main.c **** 
+ 139:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 140:Core/Src/main.c **** }
+ 141:Core/Src/main.c **** 
+ 142:Core/Src/main.c **** uint32_t Pin_sum(uint32_t Led_array[], unsigned char mask)
+ 143:Core/Src/main.c **** {
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 4
+
+
+  30              		.loc 1 143 1 view -0
   31              		.cfi_startproc
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
   34              		@ link register save eliminated.
-  35              		.loc 1 91 1 is_stmt 0 view .LVU1
+  35              		.loc 1 143 1 is_stmt 0 view .LVU1
   36 0000 8446     		mov	ip, r0
-  92:Core/Src/main.c ****     uint32_t final_mask = 0x00;
-  37              		.loc 1 92 5 is_stmt 1 view .LVU2
+ 144:Core/Src/main.c ****     uint32_t final_mask = 0x00;
+  37              		.loc 1 144 5 is_stmt 1 view .LVU2
   38              	.LVL1:
-  93:Core/Src/main.c ****     if (counter > 0)
-  39              		.loc 1 93 5 view .LVU3
-  40              		.loc 1 93 8 is_stmt 0 view .LVU4
-  41 0002 0029     		cmp	r1, #0
-  42              		.loc 1 93 8 view .LVU5
-  43 0004 02DD     		ble	.L6
-  44              	.LBB2:
-  94:Core/Src/main.c ****     {
-  95:Core/Src/main.c ****         for (int i = 0; i < counter; i++)
-  45              		.loc 1 95 18 view .LVU6
-  46 0006 0023     		movs	r3, #0
-  47              	.LBE2:
-  92:Core/Src/main.c ****     if (counter > 0)
-  48              		.loc 1 92 14 view .LVU7
-  49 0008 1846     		mov	r0, r3
-  50              	.LVL2:
-  92:Core/Src/main.c ****     if (counter > 0)
-  51              		.loc 1 92 14 view .LVU8
-  52 000a 05E0     		b	.L2
-  53              	.LVL3:
-  54              	.L6:
-  92:Core/Src/main.c ****     if (counter > 0)
-  55              		.loc 1 92 14 view .LVU9
-  56 000c 0020     		movs	r0, #0
-  57              	.LVL4:
-  92:Core/Src/main.c ****     if (counter > 0)
-  58              		.loc 1 92 14 view .LVU10
-  59 000e 7047     		bx	lr
-  60              	.LVL5:
-  61              	.L4:
-  62              	.LBB3:
-  96:Core/Src/main.c ****         {
-  97:Core/Src/main.c ****             final_mask |= Led_array[i];
-  63              		.loc 1 97 13 is_stmt 1 view .LVU11
-  64              		.loc 1 97 36 is_stmt 0 view .LVU12
-  65 0010 5CF82320 		ldr	r2, [ip, r3, lsl #2]
-  66              		.loc 1 97 24 view .LVU13
-  67 0014 1043     		orrs	r0, r0, r2
-  68              	.LVL6:
-  95:Core/Src/main.c ****         {
-  69              		.loc 1 95 39 is_stmt 1 discriminator 3 view .LVU14
-  70 0016 0133     		adds	r3, r3, #1
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 4
+ 145:Core/Src/main.c **** 
+ 146:Core/Src/main.c ****     for (int i = 0; i < 6; i++)
+  39              		.loc 1 146 5 view .LVU3
+  40              	.LBB2:
+  41              		.loc 1 146 10 view .LVU4
+  42              		.loc 1 146 14 is_stmt 0 view .LVU5
+  43 0002 0023     		movs	r3, #0
+  44              	.LBE2:
+ 144:Core/Src/main.c ****     uint32_t final_mask = 0x00;
+  45              		.loc 1 144 14 view .LVU6
+  46 0004 1846     		mov	r0, r3
+  47              	.LVL2:
+  48              	.LBB4:
+  49              		.loc 1 146 5 view .LVU7
+  50 0006 00E0     		b	.L2
+  51              	.LVL3:
+  52              	.L3:
+  53              		.loc 1 146 29 is_stmt 1 discriminator 2 view .LVU8
+  54 0008 0133     		adds	r3, r3, #1
+  55              	.LVL4:
+  56              	.L2:
+  57              		.loc 1 146 23 discriminator 1 view .LVU9
+  58 000a 052B     		cmp	r3, #5
+  59 000c 07DC     		bgt	.L5
+  60              	.LBB3:
+ 147:Core/Src/main.c ****     {
+ 148:Core/Src/main.c ****         unsigned char scaner = (1 << i);
+  61              		.loc 1 148 9 view .LVU10
+  62              		.loc 1 148 35 is_stmt 0 view .LVU11
+  63 000e 0122     		movs	r2, #1
+  64 0010 9A40     		lsls	r2, r2, r3
+  65              	.LVL5:
+ 149:Core/Src/main.c ****         if ((mask & scaner) != 0)
+  66              		.loc 1 149 9 is_stmt 1 view .LVU12
+  67              		.loc 1 149 12 is_stmt 0 view .LVU13
+  68 0012 0A42     		tst	r2, r1
+  69 0014 F8D0     		beq	.L3
+ 150:Core/Src/main.c ****         {
+ 151:Core/Src/main.c ****             final_mask |= Led_array[i];
+  70              		.loc 1 151 13 is_stmt 1 view .LVU14
+  71              		.loc 1 151 36 is_stmt 0 view .LVU15
+  72 0016 5CF82320 		ldr	r2, [ip, r3, lsl #2]
+  73              	.LVL6:
+  74              		.loc 1 151 24 view .LVU16
+  75 001a 1043     		orrs	r0, r0, r2
+  76              	.LVL7:
+  77              		.loc 1 151 24 view .LVU17
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 5
 
 
-  71              	.LVL7:
-  72              	.L2:
-  95:Core/Src/main.c ****         {
-  73              		.loc 1 95 27 discriminator 1 view .LVU15
-  74 0018 8B42     		cmp	r3, r1
-  75 001a F9DB     		blt	.L4
-  76              	.LBE3:
-  98:Core/Src/main.c ****         }
-  99:Core/Src/main.c ****     }
- 100:Core/Src/main.c **** 
- 101:Core/Src/main.c ****     return final_mask;
- 102:Core/Src/main.c **** }...
-  77              		.loc 1 102 1 is_stmt 0 view .LVU16
-  78 001c 7047     		bx	lr
-  79              		.cfi_endproc
-  80              	.LFE132:
-  82              		.section	.text.Led_on_off,"ax",%progbits
-  83              		.align	1
-  84              		.global	Led_on_off
-  85              		.syntax unified
-  86              		.thumb
-  87              		.thumb_func
-  89              	Led_on_off:
-  90              	.LVL8:
-  91              	.LFB131:
-  79:Core/Src/main.c **** {
-  92              		.loc 1 79 1 is_stmt 1 view -0
-  93              		.cfi_startproc
-  94              		@ args = 0, pretend = 0, frame = 48
-  95              		@ frame_needed = 0, uses_anonymous_args = 0
-  79:Core/Src/main.c **** {
-  96              		.loc 1 79 1 is_stmt 0 view .LVU18
-  97 0000 30B5     		push	{r4, r5, lr}
-  98              	.LCFI0:
-  99              		.cfi_def_cfa_offset 12
- 100              		.cfi_offset 4, -12
- 101              		.cfi_offset 5, -8
- 102              		.cfi_offset 14, -4
- 103 0002 8DB0     		sub	sp, sp, #52
- 104              	.LCFI1:
- 105              		.cfi_def_cfa_offset 64
- 106 0004 0546     		mov	r5, r0
-  80:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
- 107              		.loc 1 80 5 is_stmt 1 view .LVU19
-  80:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
- 108              		.loc 1 80 14 is_stmt 0 view .LVU20
- 109 0006 154C     		ldr	r4, .L10
- 110 0008 0DF1180C 		add	ip, sp, #24
- 111 000c A646     		mov	lr, r4
- 112 000e BEE80F00 		ldmia	lr!, {r0, r1, r2, r3}
- 113              	.LVL9:
-  80:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
- 114              		.loc 1 80 14 view .LVU21
- 115 0012 ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
- 116 0016 9EE80300 		ldm	lr, {r0, r1}
- 117 001a 8CE80300 		stm	ip, {r0, r1}
-  81:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 5
+  78 001c F4E7     		b	.L3
+  79              	.LVL8:
+  80              	.L5:
+  81              		.loc 1 151 24 view .LVU18
+  82              	.LBE3:
+  83              	.LBE4:
+ 152:Core/Src/main.c ****         }
+ 153:Core/Src/main.c ****     }
+ 154:Core/Src/main.c **** 
+ 155:Core/Src/main.c ****     return final_mask;
+  84              		.loc 1 155 5 is_stmt 1 view .LVU19
+ 156:Core/Src/main.c **** }...
+  85              		.loc 1 156 1 is_stmt 0 view .LVU20
+  86 001e 7047     		bx	lr
+  87              		.cfi_endproc
+  88              	.LFE132:
+  90              		.section	.text.Led_step,"ax",%progbits
+  91              		.align	1
+  92              		.global	Led_step
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  97              	Led_step:
+  98              	.LVL9:
+  99              	.LFB131:
+  85:Core/Src/main.c **** {
+ 100              		.loc 1 85 1 is_stmt 1 view -0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 48
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+  85:Core/Src/main.c **** {
+ 104              		.loc 1 85 1 is_stmt 0 view .LVU22
+ 105 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 106              	.LCFI0:
+ 107              		.cfi_def_cfa_offset 20
+ 108              		.cfi_offset 4, -20
+ 109              		.cfi_offset 5, -16
+ 110              		.cfi_offset 6, -12
+ 111              		.cfi_offset 7, -8
+ 112              		.cfi_offset 14, -4
+ 113 0002 8DB0     		sub	sp, sp, #52
+ 114              	.LCFI1:
+ 115              		.cfi_def_cfa_offset 72
+ 116 0004 0746     		mov	r7, r0
+ 117 0006 0E46     		mov	r6, r1
+  86:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
+ 118              		.loc 1 86 5 is_stmt 1 view .LVU23
+  86:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
+ 119              		.loc 1 86 14 is_stmt 0 view .LVU24
+ 120 0008 4D4C     		ldr	r4, .L24
+ 121 000a 0DF1180C 		add	ip, sp, #24
+ 122 000e A646     		mov	lr, r4
+ 123 0010 BEE80F00 		ldmia	lr!, {r0, r1, r2, r3}
+ 124              	.LVL10:
+  86:Core/Src/main.c ****     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_B
+ 125              		.loc 1 86 14 view .LVU25
+ 126 0014 ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 6
 
 
- 118              		.loc 1 81 5 is_stmt 1 view .LVU22
-  81:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
- 119              		.loc 1 81 14 is_stmt 0 view .LVU23
- 120 001e EE46     		mov	lr, sp
- 121 0020 04F1180C 		add	ip, r4, #24
- 122 0024 BCE80F00 		ldmia	ip!, {r0, r1, r2, r3}
- 123 0028 AEE80F00 		stmia	lr!, {r0, r1, r2, r3}
- 124 002c 9CE80300 		ldm	ip, {r0, r1}
- 125 0030 8EE80300 		stm	lr, {r0, r1}
-  83:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 6));
- 126              		.loc 1 83 5 is_stmt 1 view .LVU24
- 127 0034 0621     		movs	r1, #6
- 128 0036 6846     		mov	r0, sp
- 129 0038 FFF7FEFF 		bl	Pin_sum
- 130              	.LVL10:
-  83:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 6));
- 131              		.loc 1 83 5 is_stmt 0 discriminator 1 view .LVU25
- 132 003c 084A     		ldr	r2, .L10+4
- 133 003e 9369     		ldr	r3, [r2, #24]
- 134 0040 0343     		orrs	r3, r3, r0
- 135 0042 9361     		str	r3, [r2, #24]
-  84:Core/Src/main.c ****     if (counter > 0)
- 136              		.loc 1 84 5 is_stmt 1 view .LVU26
-  84:Core/Src/main.c ****     if (counter > 0)
- 137              		.loc 1 84 8 is_stmt 0 view .LVU27
- 138 0044 002D     		cmp	r5, #0
- 139 0046 07DD     		ble	.L7
-  86:Core/Src/main.c ****         SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, counter));
- 140              		.loc 1 86 9 is_stmt 1 view .LVU28
- 141 0048 2946     		mov	r1, r5
- 142 004a 06A8     		add	r0, sp, #24
- 143 004c FFF7FEFF 		bl	Pin_sum
- 144              	.LVL11:
-  86:Core/Src/main.c ****         SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, counter));
- 145              		.loc 1 86 9 is_stmt 0 discriminator 1 view .LVU29
- 146 0050 034A     		ldr	r2, .L10+4
- 147 0052 9369     		ldr	r3, [r2, #24]
- 148 0054 0343     		orrs	r3, r3, r0
- 149 0056 9361     		str	r3, [r2, #24]
- 150              	.L7:
-  88:Core/Src/main.c **** }
- 151              		.loc 1 88 1 view .LVU30
- 152 0058 0DB0     		add	sp, sp, #52
- 153              	.LCFI2:
- 154              		.cfi_def_cfa_offset 12
- 155              		@ sp needed
- 156 005a 30BD     		pop	{r4, r5, pc}
- 157              	.LVL12:
- 158              	.L11:
-  88:Core/Src/main.c **** }
- 159              		.loc 1 88 1 view .LVU31
- 160              		.align	2
- 161              	.L10:
- 162 005c 00000000 		.word	.LANCHOR0
- 163 0060 00040240 		.word	1073873920
- 164              		.cfi_endproc
- 165              	.LFE131:
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 6
+ 127 0018 9EE80300 		ldm	lr, {r0, r1}
+ 128 001c 8CE80300 		stm	ip, {r0, r1}
+  87:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
+ 129              		.loc 1 87 5 is_stmt 1 view .LVU26
+  87:Core/Src/main.c ****     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO
+ 130              		.loc 1 87 14 is_stmt 0 view .LVU27
+ 131 0020 EE46     		mov	lr, sp
+ 132 0022 04F1180C 		add	ip, r4, #24
+ 133 0026 BCE80F00 		ldmia	ip!, {r0, r1, r2, r3}
+ 134 002a AEE80F00 		stmia	lr!, {r0, r1, r2, r3}
+ 135 002e 9CE80300 		ldm	ip, {r0, r1}
+ 136 0032 8EE80300 		stm	lr, {r0, r1}
+  89:Core/Src/main.c ****     if (step == 0)
+ 137              		.loc 1 89 5 is_stmt 1 view .LVU28
+  89:Core/Src/main.c ****     if (step == 0)
+ 138              		.loc 1 89 8 is_stmt 0 view .LVU29
+ 139 0036 6FB1     		cbz	r7, .L6
+ 140 0038 3D46     		mov	r5, r7
+  92:Core/Src/main.c ****     if (direction == 1)
+ 141              		.loc 1 92 5 is_stmt 1 view .LVU30
+  92:Core/Src/main.c ****     if (direction == 1)
+ 142              		.loc 1 92 8 is_stmt 0 view .LVU31
+ 143 003a 012E     		cmp	r6, #1
+ 144 003c 0CD0     		beq	.L21
+ 106:Core/Src/main.c ****     else if (direction == 2)
+ 145              		.loc 1 106 10 is_stmt 1 view .LVU32
+ 106:Core/Src/main.c ****     else if (direction == 2)
+ 146              		.loc 1 106 13 is_stmt 0 view .LVU33
+ 147 003e 022E     		cmp	r6, #2
+ 148 0040 3DD0     		beq	.L22
+ 149              	.LVL11:
+ 150              	.L14:
+ 139:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 151              		.loc 1 139 5 is_stmt 1 view .LVU34
+ 152 0042 404B     		ldr	r3, .L24+4
+ 153 0044 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 154 0046 06A8     		add	r0, sp, #24
+ 155 0048 FFF7FEFF 		bl	Pin_sum
+ 156              	.LVL12:
+ 139:Core/Src/main.c ****     SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 157              		.loc 1 139 5 is_stmt 0 discriminator 1 view .LVU35
+ 158 004c 3E4A     		ldr	r2, .L24+8
+ 159 004e 9369     		ldr	r3, [r2, #24]
+ 160 0050 0343     		orrs	r3, r3, r0
+ 161 0052 9361     		str	r3, [r2, #24]
+ 162              	.L6:
+ 140:Core/Src/main.c **** }
+ 163              		.loc 1 140 1 view .LVU36
+ 164 0054 0DB0     		add	sp, sp, #52
+ 165              	.LCFI2:
+ 166              		.cfi_remember_state
+ 167              		.cfi_def_cfa_offset 20
+ 168              		@ sp needed
+ 169 0056 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 170              	.LVL13:
+ 171              	.L21:
+ 172              	.LCFI3:
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 7
 
 
- 167              		.section	.text.main,"ax",%progbits
- 168              		.align	1
- 169              		.global	main
- 170              		.syntax unified
- 171              		.thumb
- 172              		.thumb_func
- 174              	main:
- 175              	.LFB130:
-  14:Core/Src/main.c **** {
- 176              		.loc 1 14 1 is_stmt 1 view -0
- 177              		.cfi_startproc
- 178              		@ Volatile: function does not return.
- 179              		@ args = 0, pretend = 0, frame = 0
- 180              		@ frame_needed = 0, uses_anonymous_args = 0
- 181 0000 08B5     		push	{r3, lr}
- 182              	.LCFI3:
- 183              		.cfi_def_cfa_offset 8
- 184              		.cfi_offset 3, -8
- 185              		.cfi_offset 14, -4
-  15:Core/Src/main.c ****     gpio_init();
- 186              		.loc 1 15 5 view .LVU33
- 187 0002 FFF7FEFF 		bl	gpio_init
- 188              	.LVL13:
- 189 0006 25E0     		b	.L25
- 190              	.L13:
-  30:Core/Src/main.c ****             Was_changed1 = 0;
- 191              		.loc 1 30 13 view .LVU34
-  30:Core/Src/main.c ****             Was_changed1 = 0;
- 192              		.loc 1 30 26 is_stmt 0 view .LVU35
- 193 0008 354B     		ldr	r3, .L29
- 194 000a 0022     		movs	r2, #0
- 195 000c 1A60     		str	r2, [r3]
- 196 000e 35E0     		b	.L15
- 197              	.L28:
-  38:Core/Src/main.c ****                 if(Led_amount<0){Led_amount=0;}
- 198              		.loc 1 38 34 is_stmt 1 discriminator 1 view .LVU36
-  38:Core/Src/main.c ****                 if(Led_amount<0){Led_amount=0;}
- 199              		.loc 1 38 44 is_stmt 0 discriminator 1 view .LVU37
- 200 0010 1346     		mov	r3, r2
- 201 0012 0022     		movs	r2, #0
- 202 0014 1A60     		str	r2, [r3]
- 203 0016 3FE0     		b	.L17
- 204              	.L16:
-  44:Core/Src/main.c ****             Was_changed2 = 0;
- 205              		.loc 1 44 13 is_stmt 1 view .LVU38
-  44:Core/Src/main.c ****             Was_changed2 = 0;
- 206              		.loc 1 44 26 is_stmt 0 view .LVU39
- 207 0018 324B     		ldr	r3, .L29+4
- 208 001a 0022     		movs	r2, #0
- 209 001c 1A60     		str	r2, [r3]
- 210 001e 3EE0     		b	.L18
- 211              	.L20:
-  54:Core/Src/main.c ****             Was_changed3 = 1;
- 212              		.loc 1 54 13 is_stmt 1 view .LVU40
-  54:Core/Src/main.c ****             Was_changed3 = 1;
- 213              		.loc 1 54 26 is_stmt 0 view .LVU41
- 214 0020 314B     		ldr	r3, .L29+8
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 7
+ 173              		.cfi_restore_state
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+ 174              		.loc 1 94 9 is_stmt 1 view .LVU37
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+ 175              		.loc 1 94 21 is_stmt 0 view .LVU38
+ 176 0058 3C4B     		ldr	r3, .L24+12
+ 177 005a 1C68     		ldr	r4, [r3]
+ 178 005c 2544     		add	r5, r5, r4
+ 179              	.LVL14:
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+ 180              		.loc 1 94 12 view .LVU39
+ 181 005e 062D     		cmp	r5, #6
+ 182 0060 03DC     		bgt	.L10
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+ 183              		.loc 1 94 42 discriminator 1 view .LVU40
+ 184 0062 384B     		ldr	r3, .L24+4
+ 185 0064 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  94:Core/Src/main.c ****         if ((cursor + step > 6) || (mask == 0b00111111))
+ 186              		.loc 1 94 33 discriminator 1 view .LVU41
+ 187 0066 3F2B     		cmp	r3, #63
+ 188 0068 1BD1     		bne	.L12
+ 189              	.L10:
+  96:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+ 190              		.loc 1 96 13 is_stmt 1 view .LVU42
+ 191 006a 3F21     		movs	r1, #63
+ 192 006c 6846     		mov	r0, sp
+ 193 006e FFF7FEFF 		bl	Pin_sum
+ 194              	.LVL15:
+  96:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+ 195              		.loc 1 96 13 is_stmt 0 discriminator 1 view .LVU43
+ 196 0072 354A     		ldr	r2, .L24+8
+ 197 0074 9369     		ldr	r3, [r2, #24]
+ 198 0076 0343     		orrs	r3, r3, r0
+ 199 0078 9361     		str	r3, [r2, #24]
+  97:Core/Src/main.c ****             mask = 0x00;
+ 200              		.loc 1 97 13 is_stmt 1 view .LVU44
+  97:Core/Src/main.c ****             mask = 0x00;
+ 201              		.loc 1 97 18 is_stmt 0 view .LVU45
+ 202 007a 324B     		ldr	r3, .L24+4
+ 203 007c 0022     		movs	r2, #0
+ 204 007e 1A70     		strb	r2, [r3]
+ 205 0080 0FE0     		b	.L12
+ 206              	.LVL16:
+ 207              	.L13:
+ 208              	.LBB5:
+ 101:Core/Src/main.c ****             mask |= (1 << (i % 6));
+ 209              		.loc 1 101 13 is_stmt 1 view .LVU46
+ 101:Core/Src/main.c ****             mask |= (1 << (i % 6));
+ 210              		.loc 1 101 30 is_stmt 0 view .LVU47
+ 211 0082 334B     		ldr	r3, .L24+16
+ 212 0084 83FB0423 		smull	r2, r3, r3, r4
+ 213 0088 A3EBE473 		sub	r3, r3, r4, asr #31
+ 214 008c 03EB4303 		add	r3, r3, r3, lsl #1
+ 215 0090 A4EB4303 		sub	r3, r4, r3, lsl #1
+ 101:Core/Src/main.c ****             mask |= (1 << (i % 6));
+ 216              		.loc 1 101 24 view .LVU48
+ 217 0094 0122     		movs	r2, #1
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 8
 
 
- 215 0022 0122     		movs	r2, #1
- 216 0024 1A60     		str	r2, [r3]
- 217              	.L21:
-  61:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
- 218              		.loc 1 61 9 is_stmt 1 view .LVU42
-  61:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
- 219              		.loc 1 61 13 is_stmt 0 view .LVU43
- 220 0026 314B     		ldr	r3, .L29+12
- 221 0028 1B69     		ldr	r3, [r3, #16]
-  61:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
- 222              		.loc 1 61 12 view .LVU44
- 223 002a 13F4807F 		tst	r3, #256
- 224 002e 53D0     		beq	.L22
-  63:Core/Src/main.c ****             if (Was_changed4 == 0)
- 225              		.loc 1 63 13 is_stmt 1 view .LVU45
-  63:Core/Src/main.c ****             if (Was_changed4 == 0)
- 226              		.loc 1 63 30 is_stmt 0 view .LVU46
- 227 0030 2F4B     		ldr	r3, .L29+16
- 228 0032 1B68     		ldr	r3, [r3]
-  63:Core/Src/main.c ****             if (Was_changed4 == 0)
- 229              		.loc 1 63 16 view .LVU47
- 230 0034 3BB9     		cbnz	r3, .L23
-  65:Core/Src/main.c ****                 counter -= Led_amount;
- 231              		.loc 1 65 17 is_stmt 1 view .LVU48
-  65:Core/Src/main.c ****                 counter -= Led_amount;
- 232              		.loc 1 65 25 is_stmt 0 view .LVU49
- 233 0036 2F4A     		ldr	r2, .L29+20
- 234 0038 1368     		ldr	r3, [r2]
- 235 003a 2F49     		ldr	r1, .L29+24
- 236 003c 0968     		ldr	r1, [r1]
- 237 003e 5B1A     		subs	r3, r3, r1
- 238 0040 1360     		str	r3, [r2]
-  66:Core/Src/main.c ****                 if(counter<0){counter=0;}
- 239              		.loc 1 66 17 is_stmt 1 view .LVU50
-  66:Core/Src/main.c ****                 if(counter<0){counter=0;}
- 240              		.loc 1 66 19 is_stmt 0 view .LVU51
- 241 0042 002B     		cmp	r3, #0
- 242 0044 44DB     		blt	.L27
- 243              	.L23:
-  68:Core/Src/main.c ****             Was_changed4 = 1;
- 244              		.loc 1 68 13 is_stmt 1 view .LVU52
-  68:Core/Src/main.c ****             Was_changed4 = 1;
- 245              		.loc 1 68 26 is_stmt 0 view .LVU53
- 246 0046 2A4B     		ldr	r3, .L29+16
- 247 0048 0122     		movs	r2, #1
- 248 004a 1A60     		str	r2, [r3]
- 249              	.L24:
-  75:Core/Src/main.c ****         Led_on_off(counter);
- 250              		.loc 1 75 9 is_stmt 1 view .LVU54
- 251 004c 294B     		ldr	r3, .L29+20
- 252 004e 1868     		ldr	r0, [r3]
- 253 0050 FFF7FEFF 		bl	Led_on_off
- 254              	.LVL14:
-  17:Core/Src/main.c ****     while (1)
- 255              		.loc 1 17 11 view .LVU55
- 256              	.L25:
-  17:Core/Src/main.c ****     while (1)
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 8
+ 218 0096 9A40     		lsls	r2, r2, r3
+ 101:Core/Src/main.c ****             mask |= (1 << (i % 6));
+ 219              		.loc 1 101 18 view .LVU49
+ 220 0098 2A49     		ldr	r1, .L24+4
+ 221 009a 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 222 009c 1343     		orrs	r3, r3, r2
+ 223 009e 0B70     		strb	r3, [r1]
+  99:Core/Src/main.c ****         for (int i = cursor; i < cursor + step; i++)
+ 224              		.loc 1 99 50 is_stmt 1 discriminator 3 view .LVU50
+ 225 00a0 0134     		adds	r4, r4, #1
+ 226              	.LVL17:
+ 227              	.L12:
+  99:Core/Src/main.c ****         for (int i = cursor; i < cursor + step; i++)
+ 228              		.loc 1 99 32 discriminator 1 view .LVU51
+ 229 00a2 A542     		cmp	r5, r4
+ 230 00a4 EDDC     		bgt	.L13
+ 231              	.LBE5:
+ 104:Core/Src/main.c ****         cursor = (cursor + step) % 6;
+ 232              		.loc 1 104 9 view .LVU52
+ 104:Core/Src/main.c ****         cursor = (cursor + step) % 6;
+ 233              		.loc 1 104 34 is_stmt 0 view .LVU53
+ 234 00a6 2A4B     		ldr	r3, .L24+16
+ 235 00a8 83FB0523 		smull	r2, r3, r3, r5
+ 236 00ac A3EBE573 		sub	r3, r3, r5, asr #31
+ 237 00b0 03EB4303 		add	r3, r3, r3, lsl #1
+ 238 00b4 A5EB4303 		sub	r3, r5, r3, lsl #1
+ 104:Core/Src/main.c ****         cursor = (cursor + step) % 6;
+ 239              		.loc 1 104 16 view .LVU54
+ 240 00b8 244A     		ldr	r2, .L24+12
+ 241 00ba 1360     		str	r3, [r2]
+ 242 00bc C1E7     		b	.L14
+ 243              	.LVL18:
+ 244              	.L22:
+ 108:Core/Src/main.c ****         if (cursor - step < 0)
+ 245              		.loc 1 108 9 is_stmt 1 view .LVU55
+ 108:Core/Src/main.c ****         if (cursor - step < 0)
+ 246              		.loc 1 108 20 is_stmt 0 view .LVU56
+ 247 00be 234B     		ldr	r3, .L24+12
+ 248 00c0 1A68     		ldr	r2, [r3]
+ 108:Core/Src/main.c ****         if (cursor - step < 0)
+ 249              		.loc 1 108 12 view .LVU57
+ 250 00c2 D51B     		subs	r5, r2, r7
+ 251              	.LVL19:
+ 108:Core/Src/main.c ****         if (cursor - step < 0)
+ 252              		.loc 1 108 12 view .LVU58
+ 253 00c4 02D4     		bmi	.L23
+ 254              	.LBB6:
+ 126:Core/Src/main.c ****             unsigned char delete_mask = 0x00;
+ 255              		.loc 1 126 13 is_stmt 1 view .LVU59
+ 256              	.LVL20:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 257              		.loc 1 127 13 view .LVU60
+ 258              	.LBB7:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 259              		.loc 1 127 18 view .LVU61
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 260              		.loc 1 127 22 is_stmt 0 view .LVU62
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 9
 
 
- 257              		.loc 1 17 5 view .LVU56
-  19:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
- 258              		.loc 1 19 9 view .LVU57
-  19:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
- 259              		.loc 1 19 13 is_stmt 0 view .LVU58
- 260 0054 254B     		ldr	r3, .L29+12
- 261 0056 1B69     		ldr	r3, [r3, #16]
-  19:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
- 262              		.loc 1 19 12 view .LVU59
- 263 0058 13F0200F 		tst	r3, #32
- 264 005c D4D0     		beq	.L13
-  21:Core/Src/main.c ****             if (Was_changed1 == 0)
- 265              		.loc 1 21 13 is_stmt 1 view .LVU60
-  21:Core/Src/main.c ****             if (Was_changed1 == 0)
- 266              		.loc 1 21 30 is_stmt 0 view .LVU61
- 267 005e 204B     		ldr	r3, .L29
- 268 0060 1B68     		ldr	r3, [r3]
-  21:Core/Src/main.c ****             if (Was_changed1 == 0)
- 269              		.loc 1 21 16 view .LVU62
- 270 0062 43B9     		cbnz	r3, .L14
-  23:Core/Src/main.c ****                 Led_amount += 1;
- 271              		.loc 1 23 17 is_stmt 1 view .LVU63
-  23:Core/Src/main.c ****                 Led_amount += 1;
- 272              		.loc 1 23 28 is_stmt 0 view .LVU64
- 273 0064 244A     		ldr	r2, .L29+24
- 274 0066 1368     		ldr	r3, [r2]
- 275 0068 0133     		adds	r3, r3, #1
- 276 006a 1360     		str	r3, [r2]
-  24:Core/Src/main.c ****                 if(Led_amount > 6){Led_amount = 6;}
- 277              		.loc 1 24 17 is_stmt 1 view .LVU65
-  24:Core/Src/main.c ****                 if(Led_amount > 6){Led_amount = 6;}
- 278              		.loc 1 24 19 is_stmt 0 view .LVU66
- 279 006c 062B     		cmp	r3, #6
- 280 006e 02DD     		ble	.L14
-  24:Core/Src/main.c ****                 if(Led_amount > 6){Led_amount = 6;}
- 281              		.loc 1 24 36 is_stmt 1 discriminator 1 view .LVU67
-  24:Core/Src/main.c ****                 if(Led_amount > 6){Led_amount = 6;}
- 282              		.loc 1 24 47 is_stmt 0 discriminator 1 view .LVU68
- 283 0070 1346     		mov	r3, r2
- 284 0072 0622     		movs	r2, #6
- 285 0074 1A60     		str	r2, [r3]
- 286              	.L14:
-  26:Core/Src/main.c ****             Was_changed1 = 1;
- 287              		.loc 1 26 13 is_stmt 1 view .LVU69
-  26:Core/Src/main.c ****             Was_changed1 = 1;
- 288              		.loc 1 26 26 is_stmt 0 view .LVU70
- 289 0076 1A4B     		ldr	r3, .L29
- 290 0078 0122     		movs	r2, #1
- 291 007a 1A60     		str	r2, [r3]
- 292              	.L15:
-  33:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
- 293              		.loc 1 33 9 is_stmt 1 view .LVU71
-  33:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
- 294              		.loc 1 33 13 is_stmt 0 view .LVU72
- 295 007c 1B4B     		ldr	r3, .L29+12
- 296 007e 1B69     		ldr	r3, [r3, #16]
-  33:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 9
+ 261 00c6 013A     		subs	r2, r2, #1
+ 262              	.LVL21:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 263              		.loc 1 127 22 view .LVU63
+ 264              	.LBE7:
+ 126:Core/Src/main.c ****             unsigned char delete_mask = 0x00;
+ 265              		.loc 1 126 27 view .LVU64
+ 266 00c8 0021     		movs	r1, #0
+ 267              	.LBB8:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 268              		.loc 1 127 13 view .LVU65
+ 269 00ca 2CE0     		b	.L18
+ 270              	.LVL22:
+ 271              	.L23:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 272              		.loc 1 127 13 view .LVU66
+ 273              	.LBE8:
+ 274              	.LBE6:
+ 275              	.LBB10:
+ 110:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+ 276              		.loc 1 110 13 is_stmt 1 view .LVU67
+ 277 00cc 3F21     		movs	r1, #63
+ 278 00ce 6846     		mov	r0, sp
+ 279 00d0 FFF7FEFF 		bl	Pin_sum
+ 280              	.LVL23:
+ 110:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+ 281              		.loc 1 110 13 is_stmt 0 discriminator 1 view .LVU68
+ 282 00d4 1C4A     		ldr	r2, .L24+8
+ 283 00d6 9369     		ldr	r3, [r2, #24]
+ 284 00d8 0343     		orrs	r3, r3, r0
+ 285 00da 9361     		str	r3, [r2, #24]
+ 111:Core/Src/main.c ****             mask = 0x00;
+ 286              		.loc 1 111 13 is_stmt 1 view .LVU69
+ 111:Core/Src/main.c ****             mask = 0x00;
+ 287              		.loc 1 111 18 is_stmt 0 view .LVU70
+ 288 00dc 0023     		movs	r3, #0
+ 289 00de 194A     		ldr	r2, .L24+4
+ 290 00e0 1370     		strb	r3, [r2]
+ 113:Core/Src/main.c ****             int new_cursor = 6 + (cursor - step);
+ 291              		.loc 1 113 13 is_stmt 1 view .LVU71
+ 113:Core/Src/main.c ****             int new_cursor = 6 + (cursor - step);
+ 292              		.loc 1 113 17 is_stmt 0 view .LVU72
+ 293 00e2 0635     		adds	r5, r5, #6
+ 294              	.LVL24:
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 295              		.loc 1 115 13 is_stmt 1 view .LVU73
+ 296              	.LBB11:
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 297              		.loc 1 115 18 view .LVU74
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 298              		.loc 1 115 13 is_stmt 0 view .LVU75
+ 299 00e4 06E0     		b	.L16
+ 300              	.LVL25:
+ 301              	.L17:
+ 117:Core/Src/main.c ****                 mask |= (1 << i);
+ 302              		.loc 1 117 17 is_stmt 1 view .LVU76
+ 117:Core/Src/main.c ****                 mask |= (1 << i);
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 10
 
 
- 297              		.loc 1 33 12 view .LVU73
- 298 0080 13F0400F 		tst	r3, #64
- 299 0084 C8D0     		beq	.L16
-  35:Core/Src/main.c ****             if (Was_changed2 == 0)
- 300              		.loc 1 35 13 is_stmt 1 view .LVU74
-  35:Core/Src/main.c ****             if (Was_changed2 == 0)
- 301              		.loc 1 35 30 is_stmt 0 view .LVU75
- 302 0086 174B     		ldr	r3, .L29+4
- 303 0088 1B68     		ldr	r3, [r3]
-  35:Core/Src/main.c ****             if (Was_changed2 == 0)
- 304              		.loc 1 35 16 view .LVU76
- 305 008a 2BB9     		cbnz	r3, .L17
-  37:Core/Src/main.c ****                 Led_amount -= 1;
- 306              		.loc 1 37 17 is_stmt 1 view .LVU77
-  37:Core/Src/main.c ****                 Led_amount -= 1;
- 307              		.loc 1 37 28 is_stmt 0 view .LVU78
- 308 008c 1A4A     		ldr	r2, .L29+24
- 309 008e 1368     		ldr	r3, [r2]
- 310 0090 013B     		subs	r3, r3, #1
- 311 0092 1360     		str	r3, [r2]
-  38:Core/Src/main.c ****                 if(Led_amount<0){Led_amount=0;}
- 312              		.loc 1 38 17 is_stmt 1 view .LVU79
-  38:Core/Src/main.c ****                 if(Led_amount<0){Led_amount=0;}
- 313              		.loc 1 38 19 is_stmt 0 view .LVU80
- 314 0094 002B     		cmp	r3, #0
- 315 0096 BBDB     		blt	.L28
- 316              	.L17:
-  40:Core/Src/main.c ****             Was_changed2 = 1;
- 317              		.loc 1 40 13 is_stmt 1 view .LVU81
-  40:Core/Src/main.c ****             Was_changed2 = 1;
- 318              		.loc 1 40 26 is_stmt 0 view .LVU82
- 319 0098 124B     		ldr	r3, .L29+4
- 320 009a 0122     		movs	r2, #1
- 321 009c 1A60     		str	r2, [r3]
- 322              	.L18:
-  47:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
- 323              		.loc 1 47 9 is_stmt 1 view .LVU83
-  47:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
- 324              		.loc 1 47 13 is_stmt 0 view .LVU84
- 325 009e 134B     		ldr	r3, .L29+12
- 326 00a0 1B69     		ldr	r3, [r3, #16]
-  47:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
- 327              		.loc 1 47 12 view .LVU85
- 328 00a2 13F0800F 		tst	r3, #128
- 329 00a6 0FD0     		beq	.L19
-  49:Core/Src/main.c ****             if (Was_changed3 == 0)
- 330              		.loc 1 49 13 is_stmt 1 view .LVU86
-  49:Core/Src/main.c ****             if (Was_changed3 == 0)
- 331              		.loc 1 49 30 is_stmt 0 view .LVU87
- 332 00a8 0F4B     		ldr	r3, .L29+8
- 333 00aa 1B68     		ldr	r3, [r3]
-  49:Core/Src/main.c ****             if (Was_changed3 == 0)
- 334              		.loc 1 49 16 view .LVU88
- 335 00ac 002B     		cmp	r3, #0
- 336 00ae B7D1     		bne	.L20
-  51:Core/Src/main.c ****                 counter += Led_amount;
- 337              		.loc 1 51 17 is_stmt 1 view .LVU89
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 10
+ 303              		.loc 1 117 28 is_stmt 0 view .LVU77
+ 304 00e6 0121     		movs	r1, #1
+ 305 00e8 9940     		lsls	r1, r1, r3
+ 117:Core/Src/main.c ****                 mask |= (1 << i);
+ 306              		.loc 1 117 22 view .LVU78
+ 307 00ea 1648     		ldr	r0, .L24+4
+ 308 00ec 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ 309 00ee 0A43     		orrs	r2, r2, r1
+ 310 00f0 0270     		strb	r2, [r0]
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 311              		.loc 1 115 46 is_stmt 1 discriminator 3 view .LVU79
+ 312 00f2 0133     		adds	r3, r3, #1
+ 313              	.LVL26:
+ 314              	.L16:
+ 115:Core/Src/main.c ****             for (int i = 0; i < new_cursor; i++)
+ 315              		.loc 1 115 31 discriminator 1 view .LVU80
+ 316 00f4 AB42     		cmp	r3, r5
+ 317 00f6 F6DB     		blt	.L17
+ 318              	.LBE11:
+ 120:Core/Src/main.c ****             cursor = new_cursor;
+ 319              		.loc 1 120 13 view .LVU81
+ 120:Core/Src/main.c ****             cursor = new_cursor;
+ 320              		.loc 1 120 20 is_stmt 0 view .LVU82
+ 321 00f8 144B     		ldr	r3, .L24+12
+ 322              	.LVL27:
+ 120:Core/Src/main.c ****             cursor = new_cursor;
+ 323              		.loc 1 120 20 view .LVU83
+ 324 00fa 1D60     		str	r5, [r3]
+ 122:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 325              		.loc 1 122 13 is_stmt 1 view .LVU84
+ 326 00fc 114B     		ldr	r3, .L24+4
+ 327 00fe 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 328 0100 06A8     		add	r0, sp, #24
+ 329 0102 FFF7FEFF 		bl	Pin_sum
+ 330              	.LVL28:
+ 122:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+ 331              		.loc 1 122 13 is_stmt 0 discriminator 1 view .LVU85
+ 332 0106 104A     		ldr	r2, .L24+8
+ 333 0108 9369     		ldr	r3, [r2, #24]
+ 334 010a 0343     		orrs	r3, r3, r0
+ 335 010c 9361     		str	r3, [r2, #24]
+ 336              	.LBE10:
+ 337 010e 98E7     		b	.L14
+ 338              	.LVL29:
+ 339              	.L19:
+ 340              	.LBB12:
+ 341              	.LBB9:
+ 129:Core/Src/main.c ****                 mask &= ~(1 << i);
+ 342              		.loc 1 129 17 is_stmt 1 view .LVU86
+ 129:Core/Src/main.c ****                 mask &= ~(1 << i);
+ 343              		.loc 1 129 29 is_stmt 0 view .LVU87
+ 344 0110 0123     		movs	r3, #1
+ 345 0112 9340     		lsls	r3, r3, r2
+ 129:Core/Src/main.c ****                 mask &= ~(1 << i);
+ 346              		.loc 1 129 22 view .LVU88
+ 347 0114 DC43     		mvns	r4, r3
+ 348 0116 64B2     		sxtb	r4, r4
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 11
 
 
-  51:Core/Src/main.c ****                 counter += Led_amount;
- 338              		.loc 1 51 25 is_stmt 0 view .LVU90
- 339 00b0 104A     		ldr	r2, .L29+20
- 340 00b2 1368     		ldr	r3, [r2]
- 341 00b4 1049     		ldr	r1, .L29+24
- 342 00b6 0968     		ldr	r1, [r1]
- 343 00b8 0B44     		add	r3, r3, r1
- 344 00ba 1360     		str	r3, [r2]
-  52:Core/Src/main.c ****                 if(counter>6){counter = 6;}
- 345              		.loc 1 52 17 is_stmt 1 view .LVU91
-  52:Core/Src/main.c ****                 if(counter>6){counter = 6;}
- 346              		.loc 1 52 19 is_stmt 0 view .LVU92
- 347 00bc 062B     		cmp	r3, #6
- 348 00be AFDD     		ble	.L20
-  52:Core/Src/main.c ****                 if(counter>6){counter = 6;}
- 349              		.loc 1 52 31 is_stmt 1 discriminator 1 view .LVU93
-  52:Core/Src/main.c ****                 if(counter>6){counter = 6;}
- 350              		.loc 1 52 39 is_stmt 0 discriminator 1 view .LVU94
- 351 00c0 1346     		mov	r3, r2
- 352 00c2 0622     		movs	r2, #6
- 353 00c4 1A60     		str	r2, [r3]
- 354 00c6 ABE7     		b	.L20
- 355              	.L19:
-  58:Core/Src/main.c ****             Was_changed3 = 0;
- 356              		.loc 1 58 13 is_stmt 1 view .LVU95
-  58:Core/Src/main.c ****             Was_changed3 = 0;
- 357              		.loc 1 58 26 is_stmt 0 view .LVU96
- 358 00c8 074B     		ldr	r3, .L29+8
- 359 00ca 0022     		movs	r2, #0
- 360 00cc 1A60     		str	r2, [r3]
- 361 00ce AAE7     		b	.L21
- 362              	.L27:
-  66:Core/Src/main.c ****                 if(counter<0){counter=0;}
- 363              		.loc 1 66 31 is_stmt 1 discriminator 1 view .LVU97
-  66:Core/Src/main.c ****                 if(counter<0){counter=0;}
- 364              		.loc 1 66 38 is_stmt 0 discriminator 1 view .LVU98
- 365 00d0 1346     		mov	r3, r2
- 366 00d2 0022     		movs	r2, #0
- 367 00d4 1A60     		str	r2, [r3]
- 368 00d6 B6E7     		b	.L23
- 369              	.L22:
-  72:Core/Src/main.c ****             Was_changed4 = 0;
- 370              		.loc 1 72 13 is_stmt 1 view .LVU99
-  72:Core/Src/main.c ****             Was_changed4 = 0;
- 371              		.loc 1 72 26 is_stmt 0 view .LVU100
- 372 00d8 054B     		ldr	r3, .L29+16
- 373 00da 0022     		movs	r2, #0
- 374 00dc 1A60     		str	r2, [r3]
- 375 00de B5E7     		b	.L24
- 376              	.L30:
- 377              		.align	2
- 378              	.L29:
- 379 00e0 00000000 		.word	Was_changed1
- 380 00e4 00000000 		.word	Was_changed2
- 381 00e8 00000000 		.word	Was_changed3
- 382 00ec 00040240 		.word	1073873920
- 383 00f0 00000000 		.word	Was_changed4
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 11
+ 349 0118 0A4E     		ldr	r6, .L24+4
+ 350 011a 3078     		ldrb	r0, [r6]	@ zero_extendqisi2
+ 351 011c 2040     		ands	r0, r0, r4
+ 352 011e 3070     		strb	r0, [r6]
+ 130:Core/Src/main.c ****                 delete_mask |= (1<<i);
+ 353              		.loc 1 130 17 is_stmt 1 view .LVU89
+ 130:Core/Src/main.c ****                 delete_mask |= (1<<i);
+ 354              		.loc 1 130 29 is_stmt 0 view .LVU90
+ 355 0120 1943     		orrs	r1, r1, r3
+ 356              	.LVL30:
+ 130:Core/Src/main.c ****                 delete_mask |= (1<<i);
+ 357              		.loc 1 130 29 view .LVU91
+ 358 0122 C9B2     		uxtb	r1, r1
+ 359              	.LVL31:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 360              		.loc 1 127 59 is_stmt 1 discriminator 3 view .LVU92
+ 361 0124 013A     		subs	r2, r2, #1
+ 362              	.LVL32:
+ 363              	.L18:
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 364              		.loc 1 127 40 discriminator 1 view .LVU93
+ 365 0126 9542     		cmp	r5, r2
+ 366 0128 F2DD     		ble	.L19
+ 127:Core/Src/main.c ****             for (int i = cursor - 1; i >= cursor - step; i--)
+ 367              		.loc 1 127 40 is_stmt 0 discriminator 1 view .LVU94
+ 368              	.LBE9:
+ 133:Core/Src/main.c ****             cursor = cursor - step;
+ 369              		.loc 1 133 13 is_stmt 1 view .LVU95
+ 133:Core/Src/main.c ****             cursor = cursor - step;
+ 370              		.loc 1 133 20 is_stmt 0 view .LVU96
+ 371 012a 084B     		ldr	r3, .L24+12
+ 372 012c 1D60     		str	r5, [r3]
+ 134:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, delete_mask));
+ 373              		.loc 1 134 13 is_stmt 1 view .LVU97
+ 374 012e 6846     		mov	r0, sp
+ 375 0130 FFF7FEFF 		bl	Pin_sum
+ 376              	.LVL33:
+ 134:Core/Src/main.c ****             SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, delete_mask));
+ 377              		.loc 1 134 13 is_stmt 0 discriminator 1 view .LVU98
+ 378 0134 044A     		ldr	r2, .L24+8
+ 379 0136 9369     		ldr	r3, [r2, #24]
+ 380 0138 0343     		orrs	r3, r3, r0
+ 381 013a 9361     		str	r3, [r2, #24]
+ 382 013c 81E7     		b	.L14
+ 383              	.L25:
+ 384 013e 00BF     		.align	2
+ 385              	.L24:
+ 386 0140 00000000 		.word	.LANCHOR0
+ 387 0144 00000000 		.word	mask
+ 388 0148 00040240 		.word	1073873920
+ 389 014c 00000000 		.word	cursor
+ 390 0150 ABAAAA2A 		.word	715827883
+ 391              	.LBE12:
+ 392              		.cfi_endproc
+ 393              	.LFE131:
+ 395              		.section	.text.main,"ax",%progbits
+ 396              		.align	1
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 12
 
 
- 384 00f4 00000000 		.word	counter
- 385 00f8 00000000 		.word	Led_amount
- 386              		.cfi_endproc
- 387              	.LFE130:
- 389              		.global	flag
- 390              		.section	.bss.flag,"aw",%nobits
- 391              		.align	2
- 394              	flag:
- 395 0000 00000000 		.space	4
- 396              		.global	Was_changed4
- 397              		.section	.bss.Was_changed4,"aw",%nobits
- 398              		.align	2
- 401              	Was_changed4:
- 402 0000 00000000 		.space	4
- 403              		.global	Was_changed3
- 404              		.section	.bss.Was_changed3,"aw",%nobits
- 405              		.align	2
- 408              	Was_changed3:
- 409 0000 00000000 		.space	4
- 410              		.global	Was_changed2
- 411              		.section	.bss.Was_changed2,"aw",%nobits
- 412              		.align	2
- 415              	Was_changed2:
- 416 0000 00000000 		.space	4
- 417              		.global	Was_changed1
- 418              		.section	.bss.Was_changed1,"aw",%nobits
- 419              		.align	2
- 422              	Was_changed1:
- 423 0000 00000000 		.space	4
- 424              		.global	Led_amount
- 425              		.section	.data.Led_amount,"aw"
- 426              		.align	2
- 429              	Led_amount:
- 430 0000 01000000 		.word	1
- 431              		.global	counter
- 432              		.section	.bss.counter,"aw",%nobits
- 433              		.align	2
- 436              	counter:
- 437 0000 00000000 		.space	4
- 438              		.section	.rodata
- 439              		.align	2
- 440              		.set	.LANCHOR0,. + 0
- 441              	.LC0:
- 442 0000 01000000 		.word	1
- 443 0004 02000000 		.word	2
- 444 0008 04000000 		.word	4
- 445 000c 00400000 		.word	16384
- 446 0010 00200000 		.word	8192
- 447 0014 00100000 		.word	4096
- 448              	.LC1:
- 449 0018 00000100 		.word	65536
- 450 001c 00000200 		.word	131072
- 451 0020 00000400 		.word	262144
- 452 0024 00000040 		.word	1073741824
- 453 0028 00000020 		.word	536870912
- 454 002c 00000010 		.word	268435456
- 455              		.text
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 12
+ 397              		.global	main
+ 398              		.syntax unified
+ 399              		.thumb
+ 400              		.thumb_func
+ 402              	main:
+ 403              	.LFB130:
+  18:Core/Src/main.c **** {
+ 404              		.loc 1 18 1 is_stmt 1 view -0
+ 405              		.cfi_startproc
+ 406              		@ Volatile: function does not return.
+ 407              		@ args = 0, pretend = 0, frame = 0
+ 408              		@ frame_needed = 0, uses_anonymous_args = 0
+ 409 0000 08B5     		push	{r3, lr}
+ 410              	.LCFI4:
+ 411              		.cfi_def_cfa_offset 8
+ 412              		.cfi_offset 3, -8
+ 413              		.cfi_offset 14, -4
+  19:Core/Src/main.c ****     gpio_init();
+ 414              		.loc 1 19 5 view .LVU100
+ 415 0002 FFF7FEFF 		bl	gpio_init
+ 416              	.LVL34:
+ 417 0006 2BE0     		b	.L27
+ 418              	.L29:
+  33:Core/Src/main.c ****             Was_changed1 = 1;
+ 419              		.loc 1 33 13 view .LVU101
+  33:Core/Src/main.c ****             Was_changed1 = 1;
+ 420              		.loc 1 33 26 is_stmt 0 view .LVU102
+ 421 0008 2F4B     		ldr	r3, .L44
+ 422 000a 0122     		movs	r2, #1
+ 423 000c 1A60     		str	r2, [r3]
+ 424              	.L30:
+  40:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
+ 425              		.loc 1 40 9 is_stmt 1 view .LVU103
+  40:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
+ 426              		.loc 1 40 13 is_stmt 0 view .LVU104
+ 427 000e 2F4B     		ldr	r3, .L44+4
+ 428 0010 1B69     		ldr	r3, [r3, #16]
+  40:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_6) != 0)
+ 429              		.loc 1 40 12 view .LVU105
+ 430 0012 13F0400F 		tst	r3, #64
+ 431 0016 3ED0     		beq	.L31
+  42:Core/Src/main.c ****             if (Was_changed2 == 0)
+ 432              		.loc 1 42 13 is_stmt 1 view .LVU106
+  42:Core/Src/main.c ****             if (Was_changed2 == 0)
+ 433              		.loc 1 42 30 is_stmt 0 view .LVU107
+ 434 0018 2D4B     		ldr	r3, .L44+8
+ 435 001a 1B68     		ldr	r3, [r3]
+  42:Core/Src/main.c ****             if (Was_changed2 == 0)
+ 436              		.loc 1 42 16 view .LVU108
+ 437 001c 2BB9     		cbnz	r3, .L32
+  44:Core/Src/main.c ****                 Led_amount -= 1;
+ 438              		.loc 1 44 17 is_stmt 1 view .LVU109
+  44:Core/Src/main.c ****                 Led_amount -= 1;
+ 439              		.loc 1 44 28 is_stmt 0 view .LVU110
+ 440 001e 2D4A     		ldr	r2, .L44+12
+ 441 0020 1368     		ldr	r3, [r2]
+ 442 0022 013B     		subs	r3, r3, #1
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 13
 
 
- 456              	.Letext0:
- 457              		.file 2 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/machine/_default_t
- 458              		.file 3 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
- 459              		.file 4 "CMSIS/Devices/STM32F4xx/Inc/STM32F401xx/stm32f401xe.h"
- 460              		.file 5 "Core/Inc/init.h"
-ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s 			page 13
+ 443 0024 1360     		str	r3, [r2]
+  45:Core/Src/main.c ****                 if (Led_amount < 1)
+ 444              		.loc 1 45 17 is_stmt 1 view .LVU111
+  45:Core/Src/main.c ****                 if (Led_amount < 1)
+ 445              		.loc 1 45 20 is_stmt 0 view .LVU112
+ 446 0026 002B     		cmp	r3, #0
+ 447 0028 31DD     		ble	.L41
+ 448              	.L32:
+  50:Core/Src/main.c ****             Was_changed2 = 1;
+ 449              		.loc 1 50 13 is_stmt 1 view .LVU113
+  50:Core/Src/main.c ****             Was_changed2 = 1;
+ 450              		.loc 1 50 26 is_stmt 0 view .LVU114
+ 451 002a 294B     		ldr	r3, .L44+8
+ 452 002c 0122     		movs	r2, #1
+ 453 002e 1A60     		str	r2, [r3]
+ 454              	.L33:
+  57:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
+ 455              		.loc 1 57 9 is_stmt 1 view .LVU115
+  57:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
+ 456              		.loc 1 57 13 is_stmt 0 view .LVU116
+ 457 0030 264B     		ldr	r3, .L44+4
+ 458 0032 1B69     		ldr	r3, [r3, #16]
+  57:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_7) != 0)
+ 459              		.loc 1 57 12 view .LVU117
+ 460 0034 13F0800F 		tst	r3, #128
+ 461 0038 37D0     		beq	.L34
+  59:Core/Src/main.c ****             if (Was_changed3 == 0)
+ 462              		.loc 1 59 13 is_stmt 1 view .LVU118
+  59:Core/Src/main.c ****             if (Was_changed3 == 0)
+ 463              		.loc 1 59 30 is_stmt 0 view .LVU119
+ 464 003a 274B     		ldr	r3, .L44+16
+ 465 003c 1B68     		ldr	r3, [r3]
+  59:Core/Src/main.c ****             if (Was_changed3 == 0)
+ 466              		.loc 1 59 16 view .LVU120
+ 467 003e 002B     		cmp	r3, #0
+ 468 0040 2DD0     		beq	.L42
+ 469              	.L35:
+  63:Core/Src/main.c ****             Was_changed3 = 1;
+ 470              		.loc 1 63 13 is_stmt 1 view .LVU121
+  63:Core/Src/main.c ****             Was_changed3 = 1;
+ 471              		.loc 1 63 26 is_stmt 0 view .LVU122
+ 472 0042 254B     		ldr	r3, .L44+16
+ 473 0044 0122     		movs	r2, #1
+ 474 0046 1A60     		str	r2, [r3]
+ 475              	.L36:
+  70:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
+ 476              		.loc 1 70 9 is_stmt 1 view .LVU123
+  70:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
+ 477              		.loc 1 70 13 is_stmt 0 view .LVU124
+ 478 0048 204B     		ldr	r3, .L44+4
+ 479 004a 1B69     		ldr	r3, [r3, #16]
+  70:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_8) != 0)
+ 480              		.loc 1 70 12 view .LVU125
+ 481 004c 13F4807F 		tst	r3, #256
+ 482 0050 35D0     		beq	.L37
+  72:Core/Src/main.c ****             if (Was_changed4 == 0)
+ 483              		.loc 1 72 13 is_stmt 1 view .LVU126
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 14
+
+
+  72:Core/Src/main.c ****             if (Was_changed4 == 0)
+ 484              		.loc 1 72 30 is_stmt 0 view .LVU127
+ 485 0052 224B     		ldr	r3, .L44+20
+ 486 0054 1B68     		ldr	r3, [r3]
+  72:Core/Src/main.c ****             if (Was_changed4 == 0)
+ 487              		.loc 1 72 16 view .LVU128
+ 488 0056 002B     		cmp	r3, #0
+ 489 0058 2BD0     		beq	.L43
+ 490              	.L38:
+  76:Core/Src/main.c ****             Was_changed4 = 1;
+ 491              		.loc 1 76 13 is_stmt 1 view .LVU129
+  76:Core/Src/main.c ****             Was_changed4 = 1;
+ 492              		.loc 1 76 26 is_stmt 0 view .LVU130
+ 493 005a 204B     		ldr	r3, .L44+20
+ 494 005c 0122     		movs	r2, #1
+ 495 005e 1A60     		str	r2, [r3]
+ 496              	.L27:
+  21:Core/Src/main.c ****     while (1)
+ 497              		.loc 1 21 5 is_stmt 1 view .LVU131
+  23:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
+ 498              		.loc 1 23 9 view .LVU132
+  23:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
+ 499              		.loc 1 23 13 is_stmt 0 view .LVU133
+ 500 0060 1A4B     		ldr	r3, .L44+4
+ 501 0062 1B69     		ldr	r3, [r3, #16]
+  23:Core/Src/main.c ****         if (READ_BIT(GPIOB->IDR, GPIO_IDR_IDR_5) != 0)
+ 502              		.loc 1 23 12 view .LVU134
+ 503 0064 13F0200F 		tst	r3, #32
+ 504 0068 0DD0     		beq	.L28
+  25:Core/Src/main.c ****             if (Was_changed1 == 0)
+ 505              		.loc 1 25 13 is_stmt 1 view .LVU135
+  25:Core/Src/main.c ****             if (Was_changed1 == 0)
+ 506              		.loc 1 25 30 is_stmt 0 view .LVU136
+ 507 006a 174B     		ldr	r3, .L44
+ 508 006c 1B68     		ldr	r3, [r3]
+  25:Core/Src/main.c ****             if (Was_changed1 == 0)
+ 509              		.loc 1 25 16 view .LVU137
+ 510 006e 002B     		cmp	r3, #0
+ 511 0070 CAD1     		bne	.L29
+  27:Core/Src/main.c ****                 Led_amount += 1;
+ 512              		.loc 1 27 17 is_stmt 1 view .LVU138
+  27:Core/Src/main.c ****                 Led_amount += 1;
+ 513              		.loc 1 27 28 is_stmt 0 view .LVU139
+ 514 0072 184A     		ldr	r2, .L44+12
+ 515 0074 1368     		ldr	r3, [r2]
+ 516 0076 0133     		adds	r3, r3, #1
+ 517 0078 1360     		str	r3, [r2]
+  28:Core/Src/main.c ****                 if (Led_amount > 6)
+ 518              		.loc 1 28 17 is_stmt 1 view .LVU140
+  28:Core/Src/main.c ****                 if (Led_amount > 6)
+ 519              		.loc 1 28 20 is_stmt 0 view .LVU141
+ 520 007a 062B     		cmp	r3, #6
+ 521 007c C4DD     		ble	.L29
+  30:Core/Src/main.c ****                     Led_amount = 6;
+ 522              		.loc 1 30 21 is_stmt 1 view .LVU142
+  30:Core/Src/main.c ****                     Led_amount = 6;
+ 523              		.loc 1 30 32 is_stmt 0 view .LVU143
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 15
+
+
+ 524 007e 1346     		mov	r3, r2
+ 525 0080 0622     		movs	r2, #6
+ 526 0082 1A60     		str	r2, [r3]
+ 527 0084 C0E7     		b	.L29
+ 528              	.L28:
+  37:Core/Src/main.c ****             Was_changed1 = 0;
+ 529              		.loc 1 37 13 is_stmt 1 view .LVU144
+  37:Core/Src/main.c ****             Was_changed1 = 0;
+ 530              		.loc 1 37 26 is_stmt 0 view .LVU145
+ 531 0086 104B     		ldr	r3, .L44
+ 532 0088 0022     		movs	r2, #0
+ 533 008a 1A60     		str	r2, [r3]
+ 534 008c BFE7     		b	.L30
+ 535              	.L41:
+  47:Core/Src/main.c ****                     Led_amount = 1;
+ 536              		.loc 1 47 21 is_stmt 1 view .LVU146
+  47:Core/Src/main.c ****                     Led_amount = 1;
+ 537              		.loc 1 47 32 is_stmt 0 view .LVU147
+ 538 008e 1346     		mov	r3, r2
+ 539 0090 0122     		movs	r2, #1
+ 540 0092 1A60     		str	r2, [r3]
+ 541 0094 C9E7     		b	.L32
+ 542              	.L31:
+  54:Core/Src/main.c ****             Was_changed2 = 0;
+ 543              		.loc 1 54 13 is_stmt 1 view .LVU148
+  54:Core/Src/main.c ****             Was_changed2 = 0;
+ 544              		.loc 1 54 26 is_stmt 0 view .LVU149
+ 545 0096 0E4B     		ldr	r3, .L44+8
+ 546 0098 0022     		movs	r2, #0
+ 547 009a 1A60     		str	r2, [r3]
+ 548 009c C8E7     		b	.L33
+ 549              	.L42:
+  61:Core/Src/main.c ****                 Led_step(Led_amount, 1);
+ 550              		.loc 1 61 17 is_stmt 1 view .LVU150
+ 551 009e 0121     		movs	r1, #1
+ 552 00a0 0C4B     		ldr	r3, .L44+12
+ 553 00a2 1868     		ldr	r0, [r3]
+ 554 00a4 FFF7FEFF 		bl	Led_step
+ 555              	.LVL35:
+ 556 00a8 CBE7     		b	.L35
+ 557              	.L34:
+  67:Core/Src/main.c ****             Was_changed3 = 0;
+ 558              		.loc 1 67 13 view .LVU151
+  67:Core/Src/main.c ****             Was_changed3 = 0;
+ 559              		.loc 1 67 26 is_stmt 0 view .LVU152
+ 560 00aa 0B4B     		ldr	r3, .L44+16
+ 561 00ac 0022     		movs	r2, #0
+ 562 00ae 1A60     		str	r2, [r3]
+ 563 00b0 CAE7     		b	.L36
+ 564              	.L43:
+  74:Core/Src/main.c ****                 Led_step(Led_amount, 2);
+ 565              		.loc 1 74 17 is_stmt 1 view .LVU153
+ 566 00b2 0221     		movs	r1, #2
+ 567 00b4 074B     		ldr	r3, .L44+12
+ 568 00b6 1868     		ldr	r0, [r3]
+ 569 00b8 FFF7FEFF 		bl	Led_step
+ 570              	.LVL36:
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 16
+
+
+ 571 00bc CDE7     		b	.L38
+ 572              	.L37:
+  80:Core/Src/main.c ****             Was_changed4 = 0;
+ 573              		.loc 1 80 13 view .LVU154
+  80:Core/Src/main.c ****             Was_changed4 = 0;
+ 574              		.loc 1 80 26 is_stmt 0 view .LVU155
+ 575 00be 074B     		ldr	r3, .L44+20
+ 576 00c0 0022     		movs	r2, #0
+ 577 00c2 1A60     		str	r2, [r3]
+ 578 00c4 CCE7     		b	.L27
+ 579              	.L45:
+ 580 00c6 00BF     		.align	2
+ 581              	.L44:
+ 582 00c8 00000000 		.word	Was_changed1
+ 583 00cc 00040240 		.word	1073873920
+ 584 00d0 00000000 		.word	Was_changed2
+ 585 00d4 00000000 		.word	Led_amount
+ 586 00d8 00000000 		.word	Was_changed3
+ 587 00dc 00000000 		.word	Was_changed4
+ 588              		.cfi_endproc
+ 589              	.LFE130:
+ 591              		.global	flag
+ 592              		.section	.bss.flag,"aw",%nobits
+ 593              		.align	2
+ 596              	flag:
+ 597 0000 00000000 		.space	4
+ 598              		.global	Was_changed4
+ 599              		.section	.bss.Was_changed4,"aw",%nobits
+ 600              		.align	2
+ 603              	Was_changed4:
+ 604 0000 00000000 		.space	4
+ 605              		.global	Was_changed3
+ 606              		.section	.bss.Was_changed3,"aw",%nobits
+ 607              		.align	2
+ 610              	Was_changed3:
+ 611 0000 00000000 		.space	4
+ 612              		.global	Was_changed2
+ 613              		.section	.bss.Was_changed2,"aw",%nobits
+ 614              		.align	2
+ 617              	Was_changed2:
+ 618 0000 00000000 		.space	4
+ 619              		.global	Was_changed1
+ 620              		.section	.bss.Was_changed1,"aw",%nobits
+ 621              		.align	2
+ 624              	Was_changed1:
+ 625 0000 00000000 		.space	4
+ 626              		.global	Led_amount
+ 627              		.section	.data.Led_amount,"aw"
+ 628              		.align	2
+ 631              	Led_amount:
+ 632 0000 01000000 		.word	1
+ 633              		.global	mask
+ 634              		.section	.bss.mask,"aw",%nobits
+ 637              	mask:
+ 638 0000 00       		.space	1
+ 639              		.global	cursor
+ 640              		.section	.bss.cursor,"aw",%nobits
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 17
+
+
+ 641              		.align	2
+ 644              	cursor:
+ 645 0000 00000000 		.space	4
+ 646              		.global	counter
+ 647              		.section	.bss.counter,"aw",%nobits
+ 648              		.align	2
+ 651              	counter:
+ 652 0000 00000000 		.space	4
+ 653              		.section	.rodata
+ 654              		.align	2
+ 655              		.set	.LANCHOR0,. + 0
+ 656              	.LC0:
+ 657 0000 01000000 		.word	1
+ 658 0004 02000000 		.word	2
+ 659 0008 04000000 		.word	4
+ 660 000c 00400000 		.word	16384
+ 661 0010 00200000 		.word	8192
+ 662 0014 00100000 		.word	4096
+ 663              	.LC1:
+ 664 0018 00000100 		.word	65536
+ 665 001c 00000200 		.word	131072
+ 666 0020 00000400 		.word	262144
+ 667 0024 00000040 		.word	1073741824
+ 668 0028 00000020 		.word	536870912
+ 669 002c 00000010 		.word	268435456
+ 670              		.text
+ 671              	.Letext0:
+ 672              		.file 2 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/machine/_default_t
+ 673              		.file 3 "D:/CMPT/Tools/xpack-arm-none-eabi-gcc-13.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 674              		.file 4 "CMSIS/Devices/STM32F4xx/Inc/STM32F401xx/stm32f401xe.h"
+ 675              		.file 5 "Core/Inc/init.h"
+ARM GAS  C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s 			page 18
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:21     .text.Pin_sum:00000000 $t
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:27     .text.Pin_sum:00000000 Pin_sum
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:83     .text.Led_on_off:00000000 $t
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:89     .text.Led_on_off:00000000 Led_on_off
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:162    .text.Led_on_off:0000005c $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:168    .text.main:00000000 $t
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:174    .text.main:00000000 main
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:379    .text.main:000000e0 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:422    .bss.Was_changed1:00000000 Was_changed1
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:415    .bss.Was_changed2:00000000 Was_changed2
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:408    .bss.Was_changed3:00000000 Was_changed3
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:401    .bss.Was_changed4:00000000 Was_changed4
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:436    .bss.counter:00000000 counter
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:429    .data.Led_amount:00000000 Led_amount
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:394    .bss.flag:00000000 flag
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:391    .bss.flag:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:398    .bss.Was_changed4:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:405    .bss.Was_changed3:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:412    .bss.Was_changed2:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:419    .bss.Was_changed1:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:426    .data.Led_amount:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:433    .bss.counter:00000000 $d
-C:\Users\Aleksei\AppData\Local\Temp\ccoCjiLS.s:439    .rodata:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:21     .text.Pin_sum:00000000 $t
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:27     .text.Pin_sum:00000000 Pin_sum
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:91     .text.Led_step:00000000 $t
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:97     .text.Led_step:00000000 Led_step
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:386    .text.Led_step:00000140 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:637    .bss.mask:00000000 mask
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:644    .bss.cursor:00000000 cursor
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:396    .text.main:00000000 $t
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:402    .text.main:00000000 main
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:582    .text.main:000000c8 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:624    .bss.Was_changed1:00000000 Was_changed1
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:617    .bss.Was_changed2:00000000 Was_changed2
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:631    .data.Led_amount:00000000 Led_amount
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:610    .bss.Was_changed3:00000000 Was_changed3
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:603    .bss.Was_changed4:00000000 Was_changed4
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:596    .bss.flag:00000000 flag
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:593    .bss.flag:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:600    .bss.Was_changed4:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:607    .bss.Was_changed3:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:614    .bss.Was_changed2:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:621    .bss.Was_changed1:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:628    .data.Led_amount:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:638    .bss.mask:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:641    .bss.cursor:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:651    .bss.counter:00000000 counter
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:648    .bss.counter:00000000 $d
+C:\Users\Aleksei\AppData\Local\Temp\cco6UHTk.s:654    .rodata:00000000 $d
 
 UNDEFINED SYMBOLS
 gpio_init

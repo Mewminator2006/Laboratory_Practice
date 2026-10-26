@@ -1,15 +1,19 @@
 
 #include "init.h"
 #include <stdlib.h>
-void Led_on_off(int counter);
-uint32_t Pin_sum(uint32_t Led_array[], int counter);
+#include <stdbool.h>
+
 int counter = 0;
+int cursor = 0;
+unsigned char mask = 0x00;
 int Led_amount = 1;
 int Was_changed1 = 0;
 int Was_changed2 = 0;
 int Was_changed3 = 0;
 int Was_changed4 = 0;
 int flag = 0;
+void Led_step(int step, int direction);
+uint32_t Pin_sum(uint32_t Led_array[], unsigned char mask);
 int main(void)
 {
     gpio_init();
@@ -38,9 +42,9 @@ int main(void)
             if (Was_changed2 == 0)
             {
                 Led_amount -= 1;
-                if (Led_amount < 0)
+                if (Led_amount < 1)
                 {
-                    Led_amount = 0;
+                    Led_amount = 1;
                 }
             }
             Was_changed2 = 1;
@@ -54,11 +58,7 @@ int main(void)
         {
             if (Was_changed3 == 0)
             {
-                counter += Led_amount;
-                if (counter > 6)
-                {
-                    counter = 6;
-                }
+                Led_step(Led_amount, 1);
             }
             Was_changed3 = 1;
         }
@@ -71,11 +71,7 @@ int main(void)
         {
             if (Was_changed4 == 0)
             {
-                counter -= Led_amount;
-                if (counter < 0)
-                {
-                    counter = 0;
-                }
+                Led_step(Led_amount, 2);
             }
             Was_changed4 = 1;
         }
@@ -83,28 +79,74 @@ int main(void)
         {
             Was_changed4 = 0;
         }
-
-        Led_on_off(counter);
     }
 }
-void Led_on_off(int counter)
+void Led_step(int step, int direction)
 {
     uint32_t set_Led_array[] = {GPIO_BSRR_BS0, GPIO_BSRR_BS1, GPIO_BSRR_BS2, GPIO_BSRR_BS14, GPIO_BSRR_BS13, GPIO_BSRR_BS12};
     uint32_t reset_Led_array[] = {GPIO_BSRR_BR0, GPIO_BSRR_BR1, GPIO_BSRR_BR2, GPIO_BSRR_BR14, GPIO_BSRR_BR13, GPIO_BSRR_BR12};
 
-    SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 6));
-    if (counter > 0)
+    if (step == 0)
+        return;
+
+    if (direction == 1)
     {
-        SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, counter));
+        if ((cursor + step > 6) || (mask == 0b00111111))
+        {
+            SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+            mask = 0x00;
+        }
+        for (int i = cursor; i < cursor + step; i++)
+        {
+            mask |= (1 << (i % 6));
+        }
+
+        cursor = (cursor + step) % 6;
     }
+    else if (direction == 2)
+    {
+        if (cursor - step < 0)
+        {
+            SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, 0b00111111));
+            mask = 0x00;
+
+            int new_cursor = 6 + (cursor - step);
+
+            for (int i = 0; i < new_cursor; i++)
+            {
+                mask |= (1 << i);
+            }
+
+            cursor = new_cursor;
+
+            SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
+        }
+        else
+        {
+            unsigned char delete_mask = 0x00;
+            for (int i = cursor - 1; i >= cursor - step; i--)
+            {
+                mask &= ~(1 << i);
+                delete_mask |= (1<<i);
+            }
+
+            cursor = cursor - step;
+            SET_BIT(GPIOB->BSRR, Pin_sum(reset_Led_array, delete_mask));
+        }
+    }
+    
+
+    SET_BIT(GPIOB->BSRR, Pin_sum(set_Led_array, mask));
 }
 
-uint32_t Pin_sum(uint32_t Led_array[], int counter)
+uint32_t Pin_sum(uint32_t Led_array[], unsigned char mask)
 {
     uint32_t final_mask = 0x00;
-    if (counter > 0)
+
+    for (int i = 0; i < 6; i++)
     {
-        for (int i = 0; i < counter; i++)
+        unsigned char scaner = (1 << i);
+        if ((mask & scaner) != 0)
         {
             final_mask |= Led_array[i];
         }
